@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
-import { getMe, updateMe, uploadProfileImage } from "../api/users";
-import { getMyRequests } from "../api/requests";
+import { useMyProfile, useUpdateProfile, useUploadAvatar } from "../hooks/useUsers";
+import { useMyRequests } from "../hooks/useRequests";
 import {
   saveProfileToCache,
   getCachedProfile,
@@ -36,7 +35,6 @@ const AvatarPlaceholder = ({ name }: { name: string }) => {
 };
 
 const ProfilePage = () => {
-  const queryClient = useQueryClient();
   const dispatch = useDispatch<AppDispatch>();
   const { showToast } = useGlobalToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -46,12 +44,10 @@ const ProfilePage = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState<UpdateUserInput>({
-    fullName: "",
-    phoneNumber: "",
+    full_name: "",
+    phone_number: "",
     bio: "",
   });
-
-  const [avatarUploading, setAvatarUploading] = useState(false);
 
   // Online/offline tracking
   useEffect(() => {
@@ -70,16 +66,7 @@ const ProfilePage = () => {
     data: profile,
     isLoading,
     isError,
-  } = useQuery<User>({
-    queryKey: ["profile"],
-    queryFn: async () => {
-      const data = await getMe();
-      await saveProfileToCache(data);
-      return data;
-    },
-    enabled: isOnline,
-    retry: false,
-  });
+  } = useMyProfile();
 
   // Load cached profile when offline or on error
   useEffect(() => {
@@ -88,6 +75,11 @@ const ProfilePage = () => {
     }
   }, [isOnline, isError]);
 
+  // Save to cache whenever fresh data arrives
+  useEffect(() => {
+    if (profile) saveProfileToCache(profile);
+  }, [profile]);
+
   const displayProfile = profile ?? cachedProfile;
   const showCacheBanner = (!isOnline || isError) && cachedProfile !== null;
 
@@ -95,71 +87,49 @@ const ProfilePage = () => {
   useEffect(() => {
     if (displayProfile) {
       setEditForm({
-        fullName: displayProfile.fullName,
-        phoneNumber: displayProfile.phoneNumber,
+        full_name: displayProfile.full_name,
+        phone_number: displayProfile.phone_number,
         bio: displayProfile.bio ?? "",
       });
     }
   }, [displayProfile]);
 
   // My requests
-  const { data: myRequests = [] } = useQuery({
-    queryKey: ["my-requests"],
-    queryFn: getMyRequests,
-    enabled: isOnline,
-    retry: false,
-  });
+  const { data: myRequests = [] } = useMyRequests();
 
-  // Update profile mutation
-  const updateMutation = useMutation({
-    mutationFn: (data: UpdateUserInput) => updateMe(data),
-    onSuccess: (updated) => {
-      queryClient.setQueryData(["profile"], updated);
-      saveProfileToCache(updated);
-      setIsEditing(false);
-      showToast("Profile updated successfully.", "success");
-    },
-    onError: async () => {
-      if (!navigator.onLine) {
-        const pendingAction = {
-          id: crypto.randomUUID(),
-          type: "UPDATE_PROFILE",
-          payload: editForm,
-          timestamp: Date.now(),
-        };
-        await savePendingAction(pendingAction);
-        dispatch(addPendingAction(pendingAction));
-        setIsEditing(false);
-        showToast("You're offline. Changes will sync when you reconnect.", "info");
-      } else {
-        showToast("Failed to save changes. Please try again.", "error");
-      }
-    },
-  });
+  // Hooks
+  const updateProfileMutation = useUpdateProfile();
+  const uploadAvatarMutation = useUploadAvatar();
 
-  const handleEditSubmit = (e: React.FormEvent) => {
+  const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    updateMutation.mutate(editForm);
+    if (!navigator.onLine) {
+      const pendingAction = {
+        id: crypto.randomUUID(),
+        type: "UPDATE_PROFILE",
+        payload: editForm,
+        timestamp: Date.now(),
+      };
+      await savePendingAction(pendingAction);
+      dispatch(addPendingAction(pendingAction));
+      setIsEditing(false);
+      showToast("You're offline. Changes will sync when you reconnect.", "info");
+      return;
+    }
+    updateProfileMutation.mutate(editForm, {
+      onSuccess: () => setIsEditing(false),
+    });
   };
 
   // Avatar upload
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setAvatarUploading(true);
-    try {
-      const result = await uploadProfileImage(file);
-      queryClient.setQueryData(["profile"], (old: User | undefined) =>
-        old ? { ...old, profileImageUrl: result.profileImageUrl } : old
-      );
-      showToast("Profile photo updated.", "success");
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Failed to upload image.";
-      showToast(message, "error");
-    } finally {
-      setAvatarUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    }
+    uploadAvatarMutation.mutate(file, {
+      onSettled: () => {
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      },
+    });
   };
 
   if (isLoading) return <Spinner />;
@@ -185,18 +155,18 @@ const ProfilePage = () => {
       {/* ── Section 1: Profile Info ── */}
       <section className="bg-white border border-gray-200 rounded-xl p-6">
         <div className="flex items-center gap-5 mb-6">
-          {displayProfile.profileImageUrl ? (
+          {displayProfile.profile_image_url ? (
             <img
-              src={displayProfile.profileImageUrl}
-              alt={displayProfile.fullName}
+              src={displayProfile.profile_image_url}
+              alt={displayProfile.full_name}
               className="h-20 w-20 rounded-full object-cover border border-gray-200"
             />
           ) : (
-            <AvatarPlaceholder name={displayProfile.fullName} />
+            <AvatarPlaceholder name={displayProfile.full_name} />
           )}
           <div>
             <h1 className="text-xl font-bold text-gray-900">
-              {displayProfile.fullName}
+              {displayProfile.full_name}
             </h1>
             <p className="text-sm text-gray-500">{displayProfile.email}</p>
             <span className="inline-block mt-1 text-xs font-medium bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full capitalize">
@@ -212,7 +182,7 @@ const ProfilePage = () => {
                 <dt className="text-gray-400 text-xs uppercase tracking-wide mb-0.5">
                   Phone Number
                 </dt>
-                <dd className="text-gray-800">{displayProfile.phoneNumber}</dd>
+                <dd className="text-gray-800">{displayProfile.phone_number}</dd>
               </div>
               {displayProfile.bio && (
                 <div>
@@ -241,9 +211,9 @@ const ProfilePage = () => {
               </label>
               <input
                 type="text"
-                value={editForm.fullName ?? ""}
+                value={editForm.full_name ?? ""}
                 onChange={(e) =>
-                  setEditForm((f) => ({ ...f, fullName: e.target.value }))
+                  setEditForm((f) => ({ ...f, full_name: e.target.value }))
                 }
                 className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -255,9 +225,9 @@ const ProfilePage = () => {
               </label>
               <input
                 type="tel"
-                value={editForm.phoneNumber ?? ""}
+                value={editForm.phone_number ?? ""}
                 onChange={(e) =>
-                  setEditForm((f) => ({ ...f, phoneNumber: e.target.value }))
+                  setEditForm((f) => ({ ...f, phone_number: e.target.value }))
                 }
                 className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -310,10 +280,10 @@ const ProfilePage = () => {
             type="file"
             accept="image/*"
             onChange={handleAvatarChange}
-            disabled={avatarUploading}
+            disabled={uploadAvatarMutation.isPending}
             className="text-sm text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 disabled:opacity-50"
           />
-          {avatarUploading && (
+          {uploadAvatarMutation.isPending && (
             <div className="h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
           )}
         </div>

@@ -77,12 +77,6 @@ const Navbar = () => {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-6">
-            <Link to="/requests" className="nav-link">
-              Requests
-            </Link>
-            <Link to="/map" className="nav-link">
-              Map
-            </Link>
             {authLinks}
           </div>
 
@@ -128,12 +122,6 @@ const Navbar = () => {
       {/* Mobile dropdown */}
       {menuOpen && (
         <div className="md:hidden border-t border-gray-200 bg-white px-4 py-3 flex flex-col gap-3">
-          <Link to="/requests" onClick={closeMenu} className="nav-link">
-            Requests
-          </Link>
-          <Link to="/map" onClick={closeMenu} className="nav-link">
-            Map
-          </Link>
           {authLinks}
         </div>
       )}

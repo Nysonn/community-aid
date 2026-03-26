@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { useAuth as useClerkAuth } from "@clerk/clerk-react";
-import { createRequest, updateRequest } from "../../api/requests";
+import { useCreateRequest, useUpdateRequest } from "../../hooks/useRequests";
 import { savePendingAction } from "../../offline/db";
 import { addPendingAction } from "../../store/slices/offlineSlice";
 import { useGlobalToast } from "../layout/Layout";
@@ -26,13 +26,15 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
   const { showToast } = useGlobalToast();
   const { getToken } = useClerkAuth();
 
+  const createRequestMutation = useCreateRequest();
+  const updateRequestMutation = useUpdateRequest();
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [type, setType] = useState<typeof TYPES[number]>("medical");
   const [locationName, setLocationName] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const [submitting, setSubmitting] = useState(false);
 
   // Geolocation state
   const [detectedLat, setDetectedLat] = useState<number | null>(null);
@@ -49,7 +51,7 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
       setTitle(editRequest.title);
       setDescription(editRequest.description);
       setType(editRequest.type);
-      setLocationName(editRequest.locationName);
+      setLocationName(editRequest.location_name);
       // Edit mode keeps existing coords but doesn't expose geo detection
       setDetectedLat(editRequest.latitude ?? null);
       setDetectedLng(editRequest.longitude ?? null);
@@ -101,77 +103,69 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
 
-    try {
-      // Refresh the token immediately before any API call so we never send
-      // a stale token that Clerk has already rotated.
-      const freshToken = await getToken();
-      if (freshToken) {
-        tokenStore.token = freshToken;
-      }
+    // Refresh the token before any API call so we never send a stale token.
+    const freshToken = await getToken();
+    if (freshToken) {
+      tokenStore.token = freshToken;
+    }
 
-      if (isEdit && editRequest) {
-        await updateRequest(editRequest.id, {
-          title,
-          description,
-          type,
-          locationName,
-          latitude: detectedLat ?? undefined,
-          longitude: detectedLng ?? undefined,
-        });
-        showToast("Request updated successfully.", "success");
-        onSuccess();
-        onClose();
-        return;
-      }
-
-      // Create mode — offline path
-      if (!navigator.onLine) {
-        const pendingAction = {
-          id: crypto.randomUUID(),
-          type: "CREATE_REQUEST",
-          payload: {
+    if (isEdit && editRequest) {
+      updateRequestMutation.mutate(
+        {
+          id: editRequest.id,
+          data: {
             title,
             description,
             type,
             location_name: locationName,
-            ...(detectedLat !== null && { latitude: detectedLat }),
-            ...(detectedLng !== null && { longitude: detectedLng }),
+            latitude: detectedLat ?? undefined,
+            longitude: detectedLng ?? undefined,
           },
-          timestamp: Date.now(),
-        };
-        await savePendingAction(pendingAction);
-        dispatch(addPendingAction(pendingAction));
-        showToast(
-          "You're offline. Request saved and will sync when you reconnect.",
-          "info"
-        );
-        onSuccess();
-        onClose();
-        return;
-      }
+        },
+        { onSuccess: () => { onSuccess(); onClose(); } }
+      );
+      return;
+    }
 
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("description", description);
-      formData.append("type", type);
-      formData.append("location_name", locationName);
-      if (detectedLat !== null) formData.append("latitude", String(detectedLat));
-      if (detectedLng !== null) formData.append("longitude", String(detectedLng));
-      files.forEach((f) => formData.append("media", f));
-
-      await createRequest(formData);
-      showToast("Request submitted. Pending admin approval.", "success");
+    // Create mode — offline path
+    if (!navigator.onLine) {
+      const pendingAction = {
+        id: crypto.randomUUID(),
+        type: "CREATE_REQUEST",
+        payload: {
+          title,
+          description,
+          type,
+          location_name: locationName,
+          ...(detectedLat !== null && { latitude: detectedLat }),
+          ...(detectedLng !== null && { longitude: detectedLng }),
+        },
+        timestamp: Date.now(),
+      };
+      await savePendingAction(pendingAction);
+      dispatch(addPendingAction(pendingAction));
+      showToast(
+        "You're offline. Request saved and will sync when you reconnect.",
+        "info"
+      );
       onSuccess();
       onClose();
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : "Submission failed. Please try again.";
-      showToast(message, "error");
-    } finally {
-      setSubmitting(false);
+      return;
     }
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("type", type);
+    formData.append("location_name", locationName);
+    if (detectedLat !== null) formData.append("latitude", String(detectedLat));
+    if (detectedLng !== null) formData.append("longitude", String(detectedLng));
+    files.forEach((f) => formData.append("media", f));
+
+    createRequestMutation.mutate(formData, {
+      onSuccess: () => { onSuccess(); onClose(); },
+    });
   };
 
   if (!isOpen) return null;
@@ -369,10 +363,14 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
             </button>
             <button
               type="submit"
-              disabled={submitting}
+              disabled={createRequestMutation.isPending || updateRequestMutation.isPending}
               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {submitting ? "Submitting..." : isEdit ? "Save Changes" : "Submit Request"}
+              {(createRequestMutation.isPending || updateRequestMutation.isPending)
+                ? "Submitting..."
+                : isEdit
+                ? "Save Changes"
+                : "Submit Request"}
             </button>
           </div>
         </form>

@@ -20,7 +20,7 @@ interface Props {
 }
 
 const RequestCard = ({ request }: Props) => {
-  const formattedDate = new Date(request.createdAt).toLocaleDateString("en-UG", {
+  const formattedDate = new Date(request.created_at).toLocaleDateString("en-UG", {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -53,7 +53,7 @@ const RequestCard = ({ request }: Props) => {
       {/* Location */}
       <p className="text-xs text-gray-400 flex items-center gap-1">
         <span>&#128205;</span>
-        {request.locationName}
+        {request.location_name}
       </p>
 
       {/* Footer row */}

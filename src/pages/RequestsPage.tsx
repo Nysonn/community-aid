@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../hooks/useAuth";
-import { getAllRequests } from "../api/requests";
+import { useRequests } from "../hooks/useRequests";
 import { saveRequestsToCache, getCachedRequests } from "../offline/db";
 import RequestCard from "../components/requests/RequestCard";
 import CreateRequestModal from "../components/requests/CreateRequestModal";
@@ -46,23 +46,22 @@ const RequestsPage = () => {
     }
   }, [isOnline]);
 
-  const { data: apiRequests, isLoading, isError } = useQuery({
-    queryKey: ["requests", typeFilter, statusFilter, locationFilter],
-    queryFn: async () => {
-      const filters: { type?: string; status?: string; location_name?: string } = {};
-      if (typeFilter) filters.type = typeFilter;
-      if (statusFilter) filters.status = statusFilter;
-      if (locationFilter) filters.location_name = locationFilter;
+  const { data: apiRequests, isLoading, isError } = useRequests(
+    isOnline
+      ? {
+          ...(typeFilter && { type: typeFilter }),
+          ...(statusFilter && { status: statusFilter }),
+          ...(locationFilter && { location_name: locationFilter }),
+        }
+      : undefined
+  );
 
-      const raw = await getAllRequests(filters);
-      const data = Array.isArray(raw) ? raw : [];
-      await saveRequestsToCache(data);
-      return data;
-    },
-    enabled: isOnline,
-    staleTime: 30_000,
-    retry: false,
-  });
+  // Save to offline cache whenever fresh data arrives
+  useEffect(() => {
+    if (apiRequests && apiRequests.length > 0) {
+      saveRequestsToCache(apiRequests);
+    }
+  }, [apiRequests]);
 
   const requests = isOnline ? (apiRequests ?? []) : (cachedRequests ?? []);
   const isCached = !isOnline && cachedRequests !== null;

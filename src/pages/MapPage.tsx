@@ -7,7 +7,7 @@ import "leaflet/dist/leaflet.css";
 import markerIconUrl from "leaflet/dist/images/marker-icon.png";
 import markerShadowUrl from "leaflet/dist/images/marker-shadow.png";
 import { getAllRequests } from "../api/requests";
-import { adminGetAllOffers } from "../api/admin";
+import { getAllOffersAdmin } from "../api/admin";
 import { getAllCachedOffers } from "../offline/db";
 import { useAuth } from "../hooks/useAuth";
 import { TYPE_BADGE, STATUS_BADGE } from "../components/requests/RequestCard";
@@ -20,7 +20,7 @@ L.Icon.Default.mergeOptions({ iconUrl: markerIconUrl, shadowUrl: markerShadowUrl
 const UGANDA_CENTER: [number, number] = [1.3733, 32.2903];
 const DEFAULT_ZOOM = 7;
 
-const OFFER_TYPE_LABEL: Record<Offer["offerType"], string> = {
+const OFFER_TYPE_LABEL: Record<Offer["offer_type"], string> = {
   transport: "Transport",
   donation: "Donation",
   expertise: "Expertise",
@@ -43,7 +43,7 @@ const MapPage = () => {
   const { data: offers = [] } = useQuery<Offer[]>({
     queryKey: ["map-offers", isAdmin],
     queryFn: async () => {
-      const result = await (isAdmin ? adminGetAllOffers() : getAllCachedOffers());
+      const result = await (isAdmin ? getAllOffersAdmin() : getAllCachedOffers());
       return Array.isArray(result) ? result : [];
     },
     staleTime: 60_000,
@@ -142,7 +142,7 @@ const MapPage = () => {
                     </span>
                   </div>
                   <p className="text-gray-500 text-xs">
-                    &#128205; {request.locationName}
+                    &#128205; {request.location_name}
                   </p>
                   <Link
                     to={`/requests/${request.id}`}
@@ -171,17 +171,17 @@ const MapPage = () => {
               <Popup>
                 <div className="min-w-[160px] space-y-1 text-sm">
                   <p className="font-semibold text-gray-900">
-                    {offer.responderName}
+                    {offer.responder_name}
                   </p>
                   <p className="text-xs text-gray-500">
                     Offer type:{" "}
                     <span className="font-medium">
-                      {OFFER_TYPE_LABEL[offer.offerType]}
+                      {OFFER_TYPE_LABEL[offer.offer_type]}
                     </span>
                   </p>
                   <p className="text-xs text-gray-400">
                     Request:{" "}
-                    {requestTitleMap.get(offer.requestId) ?? "Unknown Request"}
+                    {requestTitleMap.get(offer.request_id) ?? "Unknown Request"}
                   </p>
                 </div>
               </Popup>

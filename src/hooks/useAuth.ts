@@ -45,8 +45,8 @@ export function useAuth() {
                 Authorization: `Bearer ${token}`,
               },
             });
-            console.log("useAuth: user fetched successfully", response.data);
-            dispatch(setUser(response.data));
+            console.log("useAuth: user fetched successfully", response.data.data);
+            dispatch(setUser(response.data.data));
           } catch (err: unknown) {
             console.error("useAuth: error fetching user", err);
 
@@ -89,9 +89,9 @@ export function useAuth() {
                 });
                 console.log(
                   "useAuth: user registered and fetched successfully",
-                  retryResponse.data
+                  retryResponse.data.data
                 );
-                dispatch(setUser(retryResponse.data));
+                dispatch(setUser(retryResponse.data.data));
               } catch (registerErr) {
                 console.error("useAuth: registration failed:", registerErr);
                 dispatch(clearUser());

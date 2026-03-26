@@ -1,29 +1,22 @@
 import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  getDashboardStats,
-  getAllRequestsAdmin,
-  getAllOffersAdmin,
-  getAllUsersAdmin,
-  activateUser,
-  deactivateUser,
-  createDonation,
-  getAllDonations,
-} from "../api/admin";
-import { approveRequest, rejectRequest } from "../api/requests";
 import { useGlobalToast } from "../components/layout/Layout";
 import { TYPE_BADGE, STATUS_BADGE } from "../components/requests/RequestCard";
-import type {
-  DashboardStats,
-  EmergencyRequest,
-  Offer,
-  User,
-  CreateDonationInput,
-} from "../types";
+import {
+  useAdminStats,
+  useAdminRequests,
+  useAdminOffers,
+  useAdminUsers,
+  useActivateUser,
+  useDeactivateUser,
+  useAdminDonations,
+  useCreateDonation,
+} from "../hooks/useAdmin";
+import { useApproveRequest, useRejectRequest } from "../hooks/useRequests";
+import type { Offer } from "../types";
 
 // ─── Shared helpers ────────────────────────────────────────────────────────────
 
-const OFFER_TYPE_BADGE: Record<Offer["offerType"], string> = {
+const OFFER_TYPE_BADGE: Record<Offer["offer_type"], string> = {
   transport: "bg-purple-100 text-purple-700",
   donation: "bg-teal-100 text-teal-700",
   expertise: "bg-orange-100 text-orange-700",
@@ -196,26 +189,22 @@ function RequestFilters({
 // ─── Overview Tab ──────────────────────────────────────────────────────────────
 
 function OverviewTab() {
-  const { data: stats, isLoading } = useQuery<DashboardStats>({
-    queryKey: ["admin-stats"],
-    queryFn: getDashboardStats,
-    staleTime: 60_000,
-  });
+  const { data: stats, isLoading } = useAdminStats();
 
   if (isLoading) return <StatSkeleton />;
   if (!stats) return <p className="text-gray-500">Failed to load stats.</p>;
 
   const cards: { label: string; value: string | number }[] = [
-    { label: "Total Community Members", value: stats.totalUsers },
-    { label: "Active Members", value: stats.activeUsers },
-    { label: "Total Requests", value: stats.totalRequests },
-    { label: "Pending Requests", value: stats.pendingRequests },
-    { label: "Approved Requests", value: stats.approvedRequests },
-    { label: "Rejected Requests", value: stats.rejectedRequests },
-    { label: "Total Offers", value: stats.totalOffers },
-    { label: "Fulfilled Offers", value: stats.fulfilledOffers },
-    { label: "Total Donations", value: stats.totalDonations },
-    { label: "Total Amount Donated", value: formatUGX(stats.totalDonationAmount) },
+    { label: "Total Community Members", value: stats.total_users },
+    { label: "Active Members", value: stats.active_users },
+    { label: "Total Requests", value: stats.total_requests },
+    { label: "Pending Requests", value: stats.pending_requests },
+    { label: "Approved Requests", value: stats.approved_requests },
+    { label: "Rejected Requests", value: stats.rejected_requests },
+    { label: "Total Offers", value: stats.total_offers },
+    { label: "Fulfilled Offers", value: stats.fulfilled_offers },
+    { label: "Total Donations", value: stats.total_donations },
+    { label: "Total Amount Donated", value: formatUGX(stats.total_donation_amount) },
   ];
 
   return (
@@ -230,40 +219,22 @@ function OverviewTab() {
 // ─── Requests Tab ──────────────────────────────────────────────────────────────
 
 function RequestsTab() {
-  const queryClient = useQueryClient();
-  const { showToast } = useGlobalToast();
   const [typeFilter, setTypeFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
 
-  const { data: requests = [], isLoading } = useQuery<EmergencyRequest[]>({
-    queryKey: ["admin-requests", typeFilter, statusFilter, locationFilter],
-    queryFn: () => {
-      const filters: Record<string, string> = {};
-      if (typeFilter) filters.type = typeFilter;
-      if (statusFilter) filters.status = statusFilter;
-      if (locationFilter) filters.location_name = locationFilter;
-      return getAllRequestsAdmin(Object.keys(filters).length ? filters : undefined);
-    },
-  });
+  const filters = {
+    ...(typeFilter && { type: typeFilter }),
+    ...(statusFilter && { status: statusFilter }),
+    ...(locationFilter && { location_name: locationFilter }),
+  };
 
-  const approveMutation = useMutation({
-    mutationFn: (id: string) => approveRequest(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-requests"] });
-      showToast("Request approved.", "success");
-    },
-    onError: (err: Error) => showToast(err.message, "error"),
-  });
+  const { data: requests = [], isLoading } = useAdminRequests(
+    Object.keys(filters).length ? filters : undefined
+  );
 
-  const rejectMutation = useMutation({
-    mutationFn: (id: string) => rejectRequest(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-requests"] });
-      showToast("Request rejected.", "info");
-    },
-    onError: (err: Error) => showToast(err.message, "error"),
-  });
+  const approveMutation = useApproveRequest();
+  const rejectMutation = useRejectRequest();
 
   return (
     <div>
@@ -307,13 +278,13 @@ function RequestsTab() {
                   <Badge label={r.status} className={STATUS_BADGE[r.status]} />
                 </td>
                 <td className="px-4 py-3 text-gray-600 max-w-[140px] truncate">
-                  {r.locationName}
+                  {r.location_name}
                 </td>
                 <td className="px-4 py-3 text-gray-400 font-mono text-xs">
-                  {r.userId.slice(0, 8)}…
+                  {r.user_id.slice(0, 8)}…
                 </td>
                 <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
-                  {formatDate(r.createdAt)}
+                  {formatDate(r.created_at)}
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
@@ -363,10 +334,7 @@ function RequestsTab() {
 // ─── Offers Tab ────────────────────────────────────────────────────────────────
 
 function OffersTab() {
-  const { data: offers = [], isLoading } = useQuery<Offer[]>({
-    queryKey: ["admin-offers"],
-    queryFn: getAllOffersAdmin,
-  });
+  const { data: offers = [], isLoading } = useAdminOffers();
 
   return (
     <div>
@@ -395,13 +363,13 @@ function OffersTab() {
             {offers.map((o) => (
               <tr key={o.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-4 py-3 font-medium text-gray-900">
-                  {o.responderName}
+                  {o.responder_name}
                 </td>
-                <td className="px-4 py-3 text-gray-600">{o.responderContact}</td>
+                <td className="px-4 py-3 text-gray-600">{o.responder_contact}</td>
                 <td className="px-4 py-3">
                   <Badge
-                    label={o.offerType}
-                    className={OFFER_TYPE_BADGE[o.offerType]}
+                    label={o.offer_type}
+                    className={OFFER_TYPE_BADGE[o.offer_type]}
                   />
                 </td>
                 <td className="px-4 py-3">
@@ -412,16 +380,16 @@ function OffersTab() {
                 </td>
                 <td className="px-4 py-3">
                   <a
-                    href={`/requests/${o.requestId}`}
+                    href={`/requests/${o.request_id}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="font-mono text-xs text-blue-600 hover:underline"
                   >
-                    {o.requestId.slice(0, 8)}…
+                    {o.request_id.slice(0, 8)}…
                   </a>
                 </td>
                 <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
-                  {formatDate(o.createdAt)}
+                  {formatDate(o.created_at)}
                 </td>
               </tr>
             ))}
@@ -435,33 +403,10 @@ function OffersTab() {
 // ─── Users Tab ─────────────────────────────────────────────────────────────────
 
 function UsersTab() {
-  const queryClient = useQueryClient();
-  const { showToast } = useGlobalToast();
-
-  const { data: allUsers = [], isLoading } = useQuery<User[]>({
-    queryKey: ["admin-users"],
-    queryFn: getAllUsersAdmin,
-  });
-
+  const { data: allUsers = [], isLoading } = useAdminUsers();
   const users = allUsers.filter((u) => u.role !== "admin");
-
-  const activateMutation = useMutation({
-    mutationFn: (id: string) => activateUser(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
-      showToast("User activated.", "success");
-    },
-    onError: (err: Error) => showToast(err.message, "error"),
-  });
-
-  const deactivateMutation = useMutation({
-    mutationFn: (id: string) => deactivateUser(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
-      showToast("User deactivated.", "info");
-    },
-    onError: (err: Error) => showToast(err.message, "error"),
-  });
+  const activateMutation = useActivateUser();
+  const deactivateMutation = useDeactivateUser();
 
   return (
     <div>
@@ -494,25 +439,25 @@ function UsersTab() {
             {users.map((u) => (
               <tr key={u.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-4 py-3 font-medium text-gray-900">
-                  {u.fullName}
+                  {u.full_name}
                 </td>
                 <td className="px-4 py-3 text-gray-600">{u.email}</td>
-                <td className="px-4 py-3 text-gray-600">{u.phoneNumber}</td>
+                <td className="px-4 py-3 text-gray-600">{u.phone_number}</td>
                 <td className="px-4 py-3">
                   <Badge
-                    label={u.isActive ? "Active" : "Inactive"}
+                    label={u.is_active ? "Active" : "Inactive"}
                     className={
-                      u.isActive
+                      u.is_active
                         ? "bg-green-100 text-green-700"
                         : "bg-gray-100 text-gray-500"
                     }
                   />
                 </td>
                 <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
-                  {formatDate(u.createdAt)}
+                  {formatDate(u.created_at)}
                 </td>
                 <td className="px-4 py-3">
-                  {u.isActive ? (
+                  {u.is_active ? (
                     <button
                       onClick={() => deactivateMutation.mutate(u.id)}
                       disabled={
@@ -548,48 +493,30 @@ function UsersTab() {
 // ─── Donations Tab ─────────────────────────────────────────────────────────────
 
 function DonationsTab() {
-  const queryClient = useQueryClient();
-  const { showToast } = useGlobalToast();
-
   const [requestId, setRequestId] = useState("");
   const [donorName, setDonorName] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
 
-  const { data: donations = [], isLoading: donationsLoading } = useQuery({
-    queryKey: ["admin-donations"],
-    queryFn: getAllDonations,
-  });
-
-  const { data: allRequests = [] } = useQuery({
-    queryKey: ["admin-requests-map"],
-    queryFn: () => getAllRequestsAdmin(),
-    staleTime: 120_000,
-  });
-
+  const { data: donations = [], isLoading: donationsLoading } = useAdminDonations();
+  const { data: allRequests = [] } = useAdminRequests();
   const requestTitleMap = new Map(allRequests.map((r) => [r.id, r.title]));
 
-  const createMutation = useMutation({
-    mutationFn: (data: CreateDonationInput) => createDonation(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-donations"] });
-      showToast("Donation logged successfully.", "success");
-      setRequestId("");
-      setDonorName("");
-      setAmount("");
-      setDate("");
-    },
-    onError: (err: Error) => showToast(err.message, "error"),
-  });
+  const createMutation = useCreateDonation();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    createMutation.mutate({
-      requestId,
-      donorName,
-      amount: parseFloat(amount),
-      date,
-    });
+    createMutation.mutate(
+      { request_id: requestId, donor_name: donorName, amount: parseFloat(amount), date },
+      {
+        onSuccess: () => {
+          setRequestId("");
+          setDonorName("");
+          setAmount("");
+          setDate("");
+        },
+      }
+    );
   };
 
   return (
@@ -692,15 +619,15 @@ function DonationsTab() {
               {donations.map((d) => (
                 <tr key={d.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-3 font-medium text-gray-900">
-                    {d.donorName}
+                    {d.donor_name}
                   </td>
                   <td className="px-4 py-3 text-gray-700 font-medium">
                     {formatUGX(d.amount)}
                   </td>
                   <td className="px-4 py-3 text-gray-600 max-w-[200px] truncate">
-                    {requestTitleMap.get(d.requestId) ?? (
+                    {requestTitleMap.get(d.request_id) ?? (
                       <span className="font-mono text-xs text-gray-400">
-                        {d.requestId.slice(0, 8)}…
+                        {d.request_id.slice(0, 8)}…
                       </span>
                     )}
                   </td>

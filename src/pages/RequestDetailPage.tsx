@@ -1,18 +1,10 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "../store";
-import {
-  getRequestById,
-  approveRequest,
-  rejectRequest,
-} from "../api/requests";
-import {
-  getOffersByRequest,
-  createOffer,
-  updateOfferStatus,
-} from "../api/offers";
+import { useRequest, useApproveRequest, useRejectRequest } from "../hooks/useRequests";
+import { useOffersByRequest, useCreateOffer, useUpdateOfferStatus } from "../hooks/useOffers";
 import { savePendingAction } from "../offline/db";
 import { addPendingAction } from "../store/slices/offlineSlice";
 import { useGlobalToast } from "../components/layout/Layout";
@@ -20,7 +12,7 @@ import CreateRequestModal from "../components/requests/CreateRequestModal";
 import { TYPE_BADGE, STATUS_BADGE } from "../components/requests/RequestCard";
 import type { Offer } from "../types";
 
-const OFFER_TYPE_BADGE: Record<Offer["offerType"], string> = {
+const OFFER_TYPE_BADGE: Record<Offer["offer_type"], string> = {
   transport: "bg-purple-100 text-purple-700",
   donation: "bg-teal-100 text-teal-700",
   expertise: "bg-orange-100 text-orange-700",
@@ -51,7 +43,7 @@ const RequestDetailPage = () => {
   // Offer form state
   const [responderName, setResponderName] = useState("");
   const [responderContact, setResponderContact] = useState("");
-  const [offerType, setOfferType] = useState<Offer["offerType"]>("donation");
+  const [offerType, setOfferType] = useState<Offer["offer_type"]>("donation");
   const [offerLat, setOfferLat] = useState("");
   const [offerLng, setOfferLng] = useState("");
 
@@ -60,65 +52,16 @@ const RequestDetailPage = () => {
     data: request,
     isLoading: requestLoading,
     isError: requestError,
-  } = useQuery({
-    queryKey: ["request", id],
-    queryFn: () => getRequestById(id!),
-    enabled: !!id,
-  });
+  } = useRequest(id);
 
   // Fetch offers
-  const { data: offers = [] } = useQuery({
-    queryKey: ["offers", id],
-    queryFn: () => getOffersByRequest(id!),
-    enabled: !!id,
-  });
+  const { data: offers = [] } = useOffersByRequest(id);
 
-  // Approve / reject mutations
-  const approveMutation = useMutation({
-    mutationFn: () => approveRequest(id!),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["request", id] });
-      queryClient.invalidateQueries({ queryKey: ["requests"] });
-      showToast("Request approved.", "success");
-    },
-    onError: (err: Error) => showToast(err.message, "error"),
-  });
-
-  const rejectMutation = useMutation({
-    mutationFn: () => rejectRequest(id!),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["request", id] });
-      queryClient.invalidateQueries({ queryKey: ["requests"] });
-      showToast("Request rejected.", "info");
-    },
-    onError: (err: Error) => showToast(err.message, "error"),
-  });
-
-  // Offer status mutation
-  const offerStatusMutation = useMutation({
-    mutationFn: ({ offerId, status }: { offerId: string; status: Offer["status"] }) =>
-      updateOfferStatus(offerId, status),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["offers", id] });
-      showToast("Offer status updated.", "success");
-    },
-    onError: (err: Error) => showToast(err.message, "error"),
-  });
-
-  // Submit offer mutation
-  const submitOfferMutation = useMutation({
-    mutationFn: createOffer,
-    onSuccess: () => {
-      showToast("Thank you for your offer! The requester will be in touch.", "success");
-      setResponderName("");
-      setResponderContact("");
-      setOfferType("donation");
-      setOfferLat("");
-      setOfferLng("");
-      queryClient.invalidateQueries({ queryKey: ["offers", id] });
-    },
-    onError: (err: Error) => showToast(err.message, "error"),
-  });
+  // Mutations
+  const approveMutation = useApproveRequest();
+  const rejectMutation = useRejectRequest();
+  const offerStatusMutation = useUpdateOfferStatus();
+  const submitOfferMutation = useCreateOffer();
 
   const handleOfferSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -128,10 +71,10 @@ const RequestDetailPage = () => {
         id: crypto.randomUUID(),
         type: "CREATE_OFFER",
         payload: {
-          requestId: id!,
-          responderName,
-          responderContact,
-          offerType,
+          request_id: id!,
+          responder_name: responderName,
+          responder_contact: responderContact,
+          offer_type: offerType,
           latitude: offerLat ? parseFloat(offerLat) : undefined,
           longitude: offerLng ? parseFloat(offerLng) : undefined,
         },
@@ -149,16 +92,24 @@ const RequestDetailPage = () => {
     }
 
     submitOfferMutation.mutate({
-      requestId: id!,
-      responderName,
-      responderContact,
-      offerType,
+      request_id: id!,
+      responder_name: responderName,
+      responder_contact: responderContact,
+      offer_type: offerType,
       latitude: offerLat ? parseFloat(offerLat) : undefined,
       longitude: offerLng ? parseFloat(offerLng) : undefined,
+    }, {
+      onSuccess: () => {
+        setResponderName("");
+        setResponderContact("");
+        setOfferType("donation");
+        setOfferLat("");
+        setOfferLng("");
+      },
     });
   };
 
-  const isOwner = user?.id === request?.userId;
+  const isOwner = user?.id === request?.user_id;
 
   if (requestLoading) return <Spinner />;
   if (requestError || !request) {
@@ -169,7 +120,7 @@ const RequestDetailPage = () => {
     );
   }
 
-  const formattedDate = new Date(request.createdAt).toLocaleDateString("en-UG", {
+  const formattedDate = new Date(request.created_at).toLocaleDateString("en-UG", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -197,7 +148,7 @@ const RequestDetailPage = () => {
               </span>
             </div>
             <p className="text-sm text-gray-500 flex items-center gap-1">
-              <span>&#128205;</span> {request.locationName}
+              <span>&#128205;</span> {request.location_name}
             </p>
           </div>
 
@@ -214,14 +165,14 @@ const RequestDetailPage = () => {
             {isAdmin && (
               <>
                 <button
-                  onClick={() => approveMutation.mutate()}
+                  onClick={() => approveMutation.mutate(id!)}
                   disabled={approveMutation.isPending}
                   className="px-3 py-1.5 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 disabled:opacity-50 transition-colors"
                 >
                   {approveMutation.isPending ? "..." : "Approve"}
                 </button>
                 <button
-                  onClick={() => rejectMutation.mutate()}
+                  onClick={() => rejectMutation.mutate(id!)}
                   disabled={rejectMutation.isPending}
                   className="px-3 py-1.5 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 disabled:opacity-50 transition-colors"
                 >
@@ -239,9 +190,9 @@ const RequestDetailPage = () => {
         <p className="mt-3 text-sm text-gray-400">Posted on {formattedDate}</p>
 
         {/* Media thumbnails */}
-        {request.mediaUrls && request.mediaUrls.length > 0 && (
+        {request.media_urls && request.media_urls.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-3">
-            {request.mediaUrls.map((url, i) => (
+            {request.media_urls.map((url, i) => (
               <a key={i} href={url} target="_blank" rel="noopener noreferrer">
                 <img
                   src={url}
@@ -268,7 +219,7 @@ const RequestDetailPage = () => {
         ) : (
           <div className="space-y-3">
             {offers.map((offer) => {
-              const offerDate = new Date(offer.createdAt).toLocaleDateString("en-UG", {
+              const offerDate = new Date(offer.created_at).toLocaleDateString("en-UG", {
                 month: "short",
                 day: "numeric",
                 year: "numeric",
@@ -281,13 +232,13 @@ const RequestDetailPage = () => {
                 >
                   <div className="space-y-1">
                     <p className="font-medium text-gray-900 text-sm">
-                      {offer.responderName}
+                      {offer.responder_name}
                     </p>
                     <div className="flex items-center gap-2 flex-wrap">
                       <span
-                        className={`text-xs font-semibold px-2 py-0.5 rounded-full capitalize ${OFFER_TYPE_BADGE[offer.offerType]}`}
+                        className={`text-xs font-semibold px-2 py-0.5 rounded-full capitalize ${OFFER_TYPE_BADGE[offer.offer_type]}`}
                       >
-                        {offer.offerType}
+                        {offer.offer_type}
                       </span>
                       <span
                         className={`text-xs font-semibold px-2 py-0.5 rounded-full capitalize ${OFFER_STATUS_BADGE[offer.status]}`}
@@ -365,7 +316,7 @@ const RequestDetailPage = () => {
             <select
               required
               value={offerType}
-              onChange={(e) => setOfferType(e.target.value as Offer["offerType"])}
+              onChange={(e) => setOfferType(e.target.value as Offer["offer_type"])}
               className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="transport">Transport</option>
