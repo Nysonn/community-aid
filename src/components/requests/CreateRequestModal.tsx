@@ -322,6 +322,33 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
       media: files,
     }, {
       onSuccess: () => { onSuccess(); onClose(); },
+      onError: async (err) => {
+        const status = (err as Error & { status?: number }).status;
+        if (!status) {
+          // True network failure — treat as offline and queue
+          const pendingAction = {
+            id: crypto.randomUUID(),
+            type: "CREATE_REQUEST",
+            payload: {
+              title: trimmedTitle,
+              description: trimmedDescription,
+              type,
+              location_name: trimmedLocationName,
+              ...(coordinates.latitude !== undefined && { latitude: coordinates.latitude }),
+              ...(coordinates.longitude !== undefined && { longitude: coordinates.longitude }),
+            },
+            timestamp: Date.now(),
+          };
+          await savePendingAction(pendingAction);
+          dispatch(addPendingAction(pendingAction));
+          showToast(
+            "You're offline. Request saved and will sync when you reconnect.",
+            "info"
+          );
+          onSuccess();
+          onClose();
+        }
+      },
     });
   };
 

@@ -57,6 +57,9 @@ export function useCreateOffer() {
         return;
       }
 
+      // Network error (no status) — component-level onError will handle queuing
+      if (!err.status) return;
+
       showToast(
         err.message || "Failed to submit offer. Please try again.",
         "error"

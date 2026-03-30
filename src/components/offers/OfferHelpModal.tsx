@@ -158,6 +158,26 @@ const OfferHelpModal = ({ isOpen, onClose, request }: Props) => {
         resetForm();
         onClose();
       },
+      onError: async (err) => {
+        const status = (err as Error & { status?: number }).status;
+        if (!status) {
+          // True network failure — treat as offline and queue
+          const pendingAction = {
+            id: crypto.randomUUID(),
+            type: "CREATE_OFFER",
+            payload,
+            timestamp: Date.now(),
+          };
+          await savePendingAction(pendingAction);
+          dispatch(addPendingAction(pendingAction));
+          showToast(
+            "You're offline. Your offer has been saved and will sync when you reconnect.",
+            "info"
+          );
+          resetForm();
+          onClose();
+        }
+      },
     });
   };
 

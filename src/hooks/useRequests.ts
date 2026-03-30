@@ -87,6 +87,9 @@ export function useCreateRequest() {
         return;
       }
 
+      // Network error (no status) — component-level onError will handle queuing
+      if (!err.status) return;
+
       showToast(
         err.message || "Failed to submit request. Please try again.",
         "error"
