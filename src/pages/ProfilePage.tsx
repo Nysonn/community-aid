@@ -14,12 +14,6 @@ import { TYPE_BADGE, STATUS_BADGE } from "../components/requests/RequestCard";
 import type { AppDispatch } from "../store";
 import type { User, UpdateUserInput } from "../types";
 
-const Spinner = () => (
-  <div className="flex justify-center items-center py-24">
-    <div className="h-9 w-9 border-[3px] border-blue-600 border-t-transparent rounded-full animate-spin" />
-  </div>
-);
-
 const ProfileSkeleton = () => (
   <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6 animate-pulse">
     {/* Section 1: Profile info */}

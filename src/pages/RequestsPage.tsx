@@ -10,12 +10,6 @@ import type { EmergencyRequest } from "../types";
 const TYPES = ["", "medical", "food", "rescue", "shelter"] as const;
 const STATUSES = ["", "pending", "approved", "rejected", "closed"] as const;
 
-const Spinner = () => (
-  <div className="flex justify-center items-center py-24">
-    <div className="h-9 w-9 border-[3px] border-blue-600 border-t-transparent rounded-full animate-spin" />
-  </div>
-);
-
 const RequestCardSkeleton = () => (
   <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden flex flex-col shadow-card animate-pulse">
     <div className="h-[3px] w-full bg-gray-200" />

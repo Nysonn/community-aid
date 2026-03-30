@@ -1,12 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { MapContainer, TileLayer, CircleMarker, Popup } from "react-leaflet";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import markerIconUrl from "leaflet/dist/images/marker-icon.png";
-import markerShadowUrl from "leaflet/dist/images/marker-shadow.png";
-import { getAllRequests } from "../api/requests";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../hooks/useAuth";
 import { useRequests } from "../hooks/useRequests";
 import { saveRequestsToCache, getCachedRequests } from "../offline/db";
@@ -14,19 +8,8 @@ import RequestCard from "../components/requests/RequestCard";
 import CreateRequestModal from "../components/requests/CreateRequestModal";
 import type { EmergencyRequest } from "../types";
 
-// Fix Leaflet default icon in Vite
-delete ((L.Icon.Default.prototype as unknown) as Record<string, unknown>)._getIconUrl;
-L.Icon.Default.mergeOptions({ iconUrl: markerIconUrl, shadowUrl: markerShadowUrl });
-
-const UGANDA_CENTER: [number, number] = [1.3733, 32.2903];
 const TYPES = ["", "medical", "food", "rescue", "shelter"] as const;
 const STATUSES = ["", "pending", "approved", "rejected", "closed"] as const;
-
-const Spinner = () => (
-  <div className="flex justify-center items-center py-24">
-    <div className="h-9 w-9 border-[3px] border-blue-600 border-t-transparent rounded-full animate-spin" />
-  </div>
-);
 
 const RequestCardSkeleton = () => (
   <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden flex flex-col shadow-card animate-pulse">
@@ -50,16 +33,6 @@ const RequestCardSkeleton = () => (
 const HomePage = () => {
   const { isSignedIn, isAdmin, user } = useAuth();
   const queryClient = useQueryClient();
-
-  // ── Map: approved requests with coordinates ──────────────────────────────
-  const { data: mapRequests = [] } = useQuery<EmergencyRequest[]>({
-    queryKey: ["map-requests"],
-    queryFn: () => getAllRequests({ status: "approved" }),
-    staleTime: 60_000,
-  });
-  const mappableRequests = mapRequests.filter(
-    (r) => r.latitude != null && r.longitude != null
-  );
 
   // ── Requests section ─────────────────────────────────────────────────────
   const [typeFilter, setTypeFilter] = useState("");
