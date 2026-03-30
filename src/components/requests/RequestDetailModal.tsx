@@ -422,7 +422,7 @@ const RequestDetailModal = ({ requestId, onClose }: Props) => {
                 </section>
 
                 {/* ── Offer Help form ── */}
-                {request.status === "approved" && (
+                {request.status === "approved" && !isAdmin && (
                   <section>
                     <h4 className="text-lg font-bold text-slate-900 mb-4">
                       Offer Help
