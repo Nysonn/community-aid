@@ -82,13 +82,13 @@ define(['./workbox-9eac7809'], (function (workbox) { 'use strict';
     "revision": "3ca0b8505b4bec776b69afdba2768812"
   }, {
     "url": "index.html",
-    "revision": "0.uv6ijsaurko"
+    "revision": "0.ctl2lj6s4io"
   }], {});
   workbox.cleanupOutdatedCaches();
   workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("index.html"), {
     allowlist: [/^\/$/]
   }));
-  workbox.registerRoute(/^https:\/\/community-aid-api.onrender.com\/api\/v1/, new workbox.NetworkFirst({
+  workbox.registerRoute(/^https:\/\/community-aid-api-9u6r.onrender.com\/api\/v1/, new workbox.NetworkFirst({
     "cacheName": "api-cache",
     "networkTimeoutSeconds": 10,
     plugins: []

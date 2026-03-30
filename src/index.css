@@ -3,7 +3,20 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    font-family: "Anika", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Anek Latin", ui-sans-serif, system-ui, sans-serif;
+    background-color: #f8f9fb;
+    color: #0f172a;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: #dbeafe;
+    color: #1e40af;
   }
 }

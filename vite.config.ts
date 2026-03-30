@@ -8,6 +8,9 @@ export default defineConfig(({ mode }) => {
   const apiBaseUrl = env.VITE_API_BASE_URL ?? "http://localhost:3000/api/v1";
 
   return {
+    server: {
+      host: true, // listen on 0.0.0.0 — accessible from other devices on the same network
+    },
     plugins: [
       react(),
       VitePWA({

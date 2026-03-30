@@ -10,7 +10,9 @@ import {
   rejectRequest,
 } from "../api/requests";
 import { useGlobalToast } from "../components/layout/Layout";
-import type { UpdateRequestInput } from "../types";
+import type { CreateRequestInput, UpdateRequestInput } from "../types";
+
+type ApiError = Error & { status?: number };
 
 interface RequestFilters {
   type?: string;
@@ -50,13 +52,41 @@ export function useCreateRequest() {
   const { showToast } = useGlobalToast();
 
   return useMutation({
-    mutationFn: (data: FormData) => createRequest(data),
-    onSuccess: () => {
+    mutationFn: (data: CreateRequestInput) => createRequest(data),
+    onSuccess: (createdRequest) => {
       queryClient.invalidateQueries({ queryKey: ["requests"] });
       queryClient.invalidateQueries({ queryKey: ["my-requests"] });
-      showToast("Request submitted. Pending admin approval.", "success");
+      showToast(
+        `"${createdRequest.title}" was submitted successfully and is pending admin approval.`,
+        "success"
+      );
     },
-    onError: (err: Error) => {
+    onError: (err: ApiError) => {
+      if (err.status === 400) {
+        showToast(
+          err.message ||
+            "Could not submit the request. Check the title, description, type, and location fields.",
+          "error"
+        );
+        return;
+      }
+
+      if (err.status === 401) {
+        showToast(
+          "Your session has expired. Sign in again, then submit the request.",
+          "error"
+        );
+        return;
+      }
+
+      if (err.status === 500) {
+        showToast(
+          "The server could not save your request right now. Please try again in a moment.",
+          "error"
+        );
+        return;
+      }
+
       showToast(
         err.message || "Failed to submit request. Please try again.",
         "error"

@@ -1,10 +1,14 @@
 /**
- * Simple mutable store that holds the current Clerk session token.
+ * Mutable store shared between useAuth.ts and the Axios interceptor.
  *
- * This lets the Axios request interceptor read the token synchronously
- * without needing to call React hooks or import Clerk inside non-React code.
- *
- * src/hooks/useAuth.ts is responsible for keeping this up-to-date whenever
- * it retrieves a fresh token from Clerk.
+ * - `token`    : the most-recently-fetched Clerk JWT (fallback only)
+ * - `getToken` : reference to Clerk's getToken() — set once by useAuth.
+ *                The interceptor calls this on every request so Clerk's
+ *                built-in cache/refresh logic always provides a fresh JWT.
+ *                Without this, short-lived Clerk tokens (~60 s) expire while
+ *                the user is on the page, causing spurious 401 redirects.
  */
-export const tokenStore = { token: "" };
+export const tokenStore: {
+  token: string;
+  getToken: (() => Promise<string | null>) | null;
+} = { token: "", getToken: null };

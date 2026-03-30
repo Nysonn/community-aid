@@ -14,10 +14,11 @@ import OffersPage from "./pages/OffersPage";
 import ProfilePage from "./pages/ProfilePage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import SSORedirectPage from "./pages/SSORedirectPage";
 
 const LoadingScreen = () => (
-  <div className="flex justify-center items-center min-h-screen">
-    <div className="h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+  <div className="flex justify-center items-center min-h-screen bg-[#F8F9FB]">
+    <div className="h-9 w-9 border-[3px] border-blue-600 border-t-transparent rounded-full animate-spin" />
   </div>
 );
 
@@ -53,6 +54,7 @@ function App() {
         <Route path="/requests" element={<RequestsPage />} />
         <Route path="/requests/:id" element={<RequestDetailPage />} />
         <Route path="/map" element={<MapPage />} />
+        <Route path="/sso-role-redirect" element={<SSORedirectPage />} />
 
         {/* Protected routes */}
         <Route

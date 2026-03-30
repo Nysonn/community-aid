@@ -36,6 +36,19 @@ export interface Offer {
   status: "pending" | "accepted" | "fulfilled";
   latitude?: number;
   longitude?: number;
+  // expertise
+  expertise_details?: string;
+  // transport
+  vehicle_type?: string;
+  // donation
+  donation_amount?: number;
+  payment_method?: "mobile_money" | "visa";
+  mobile_money_provider?: string;
+  mobile_money_masked?: string;
+  card_last4?: string;
+  card_expiry_month?: number;
+  card_expiry_year?: number;
+  cardholder_name?: string;
   created_at: string;
   updated_at: string;
 }
@@ -73,6 +86,16 @@ export interface UpdateRequestInput {
   longitude?: number;
 }
 
+export interface CreateRequestInput {
+  title: string;
+  description: string;
+  type: "medical" | "food" | "rescue" | "shelter";
+  location_name: string;
+  latitude?: number | string;
+  longitude?: number | string;
+  media?: File[];
+}
+
 export interface CreateOfferInput {
   request_id: string;
   responder_name: string;
@@ -80,6 +103,26 @@ export interface CreateOfferInput {
   offer_type: "transport" | "donation" | "expertise";
   latitude?: number;
   longitude?: number;
+  // expertise
+  expertise_details?: string;
+  // transport
+  vehicle_type?: string;
+  // donation (all methods)
+  donation_amount?: number;
+  payment_method?: "mobile_money" | "visa";
+  // mobile money
+  mobile_money_provider?: "airtel_money" | "mtn_momo";
+  mobile_money_number?: string;
+  // visa
+  card_number?: string;
+  card_cvc?: string;
+  card_expiry_month?: number;
+  card_expiry_year?: number;
+  cardholder_name?: string;
+}
+
+export interface UpdateOfferStatusInput {
+  status: "pending" | "accepted" | "fulfilled";
 }
 
 export interface DashboardStats {

@@ -12,6 +12,11 @@ export function useAuth() {
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((state: RootState) => state.auth.user);
 
+  // Always keep the function reference current so the Axios interceptor can
+  // call Clerk's getToken() on every request, getting a fresh short-lived JWT
+  // via Clerk's own caching logic rather than relying on a stale stored token.
+  tokenStore.getToken = getToken;
+
   console.log(
     "useAuth: Clerk isLoaded=" + isLoaded + " isSignedIn=" + isSignedIn
   );
