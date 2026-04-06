@@ -38,6 +38,7 @@ const OfferHelpModal = ({ isOpen, onClose, request }: Props) => {
   const [mobileProvider, setMobileProvider] = useState<"airtel_money" | "mtn_momo">("mtn_momo");
   const [mobileMoneyNumber, setMobileMoneyNumber] = useState("");
   const [cardNumber, setCardNumber] = useState("");
+  const [cardNumberTouched, setCardNumberTouched] = useState(false);
   const [cardCvc, setCardCvc] = useState("");
   const [cardExpiryMonth, setCardExpiryMonth] = useState("");
   const [cardExpiryYear, setCardExpiryYear] = useState("");
@@ -52,6 +53,7 @@ const OfferHelpModal = ({ isOpen, onClose, request }: Props) => {
     setDonationAmount("");
     setDonorEmail("");
     setPaymentMethod("mobile_money");
+    setCardNumberTouched(false);
     setMobileProvider("mtn_momo");
     setMobileMoneyNumber("");
     setCardNumber("");
@@ -105,12 +107,21 @@ const OfferHelpModal = ({ isOpen, onClose, request }: Props) => {
         showToast("Please enter your mobile money number.", "error");
         return;
       }
-      if (
-        paymentMethod === "visa" &&
-        (!cardNumber.trim() || !cardCvc.trim() || !cardExpiryMonth || !cardExpiryYear || !cardholderName.trim())
-      ) {
-        showToast("Please fill in all card details.", "error");
-        return;
+      if (paymentMethod === "visa") {
+        const cardDigits = cardNumber.replace(/\s/g, "");
+        if (cardDigits.length !== 16) {
+          setCardNumberTouched(true);
+          showToast("Card number must be exactly 16 digits.", "error");
+          return;
+        }
+        if (cardCvc.length !== 3) {
+          showToast("CVC must be exactly 3 digits.", "error");
+          return;
+        }
+        if (!cardExpiryMonth || !cardExpiryYear || !cardholderName.trim()) {
+          showToast("Please fill in all card details.", "error");
+          return;
+        }
       }
     }
 
@@ -433,15 +444,49 @@ const OfferHelpModal = ({ isOpen, onClose, request }: Props) => {
                     <label className="block text-sm font-semibold text-slate-700 mb-1.5">
                       Card Number <span className="text-red-500">*</span>
                     </label>
-                    <input
-                      type="text"
-                      required
-                      maxLength={19}
-                      value={cardNumber}
-                      onChange={(e) => setCardNumber(e.target.value)}
-                      className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
-                      placeholder="1234 5678 9012 3456"
-                    />
+                    {(() => {
+                      const digits = cardNumber.replace(/\s/g, "");
+                      const isComplete = digits.length === 16;
+                      const isError = cardNumberTouched && !isComplete;
+                      return (
+                        <>
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            required
+                            value={cardNumber}
+                            onBlur={() => setCardNumberTouched(true)}
+                            onChange={(e) => {
+                              // Strip all non-digits, cap at 16
+                              const raw = e.target.value.replace(/\D/g, "").slice(0, 16);
+                              // Format as groups of 4
+                              const formatted = raw.match(/.{1,4}/g)?.join(" ") ?? raw;
+                              setCardNumber(formatted);
+                            }}
+                            className={`w-full border rounded-xl px-4 py-2.5 text-sm text-slate-900 font-mono tracking-widest focus:outline-none focus:ring-2 focus:border-transparent shadow-sm transition-colors
+                              ${isError
+                                ? "border-red-300 focus:ring-red-400 bg-red-50"
+                                : isComplete
+                                ? "border-emerald-300 focus:ring-emerald-400"
+                                : "border-gray-200 focus:ring-blue-500"
+                              }`}
+                            placeholder="1234 5678 9012 3456"
+                          />
+                          <div className="flex items-center justify-between mt-1">
+                            {isError ? (
+                              <p className="text-xs text-red-500">Must be exactly 16 digits</p>
+                            ) : (
+                              <span />
+                            )}
+                            <p className={`text-xs font-medium tabular-nums ml-auto ${
+                              isComplete ? "text-emerald-600" : isError ? "text-red-500" : "text-slate-400"
+                            }`}>
+                              {digits.length} / 16
+                            </p>
+                          </div>
+                        </>
+                      );
+                    })()}
                   </div>
                   <div className="grid grid-cols-3 gap-3">
                     <div>
@@ -479,11 +524,15 @@ const OfferHelpModal = ({ isOpen, onClose, request }: Props) => {
                       </label>
                       <input
                         type="text"
+                        inputMode="numeric"
                         required
-                        maxLength={4}
+                        maxLength={3}
                         value={cardCvc}
-                        onChange={(e) => setCardCvc(e.target.value)}
-                        className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                        onChange={(e) => {
+                          const raw = e.target.value.replace(/\D/g, "").slice(0, 3);
+                          setCardCvc(raw);
+                        }}
+                        className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
                         placeholder="123"
                       />
                     </div>
