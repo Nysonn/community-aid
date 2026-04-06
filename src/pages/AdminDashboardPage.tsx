@@ -298,8 +298,10 @@ function RequestsTab() {
                 <td className="px-4 py-3.5 text-slate-500 max-w-[140px] truncate">
                   {r.location_name}
                 </td>
-                <td className="px-4 py-3.5 text-slate-400 font-mono text-xs">
-                  {r.user_id.slice(0, 8)}…
+                <td className="px-4 py-3.5 text-slate-700 text-sm">
+                  {r.poster_name || (
+                    <span className="font-mono text-xs text-slate-400">{r.user_id.slice(0, 8)}…</span>
+                  )}
                 </td>
                 <td className="px-4 py-3.5 text-slate-400 whitespace-nowrap text-xs">
                   {formatDate(r.created_at)}

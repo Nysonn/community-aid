@@ -35,6 +35,7 @@ export interface EmergencyRequest {
   receiving_mobile_number?: string;
   created_at: string;
   updated_at: string;
+  poster_name?: string;
 }
 
 export interface Offer {
