@@ -33,6 +33,7 @@ const OfferHelpModal = ({ isOpen, onClose, request }: Props) => {
   const [vehicleType, setVehicleType] = useState("");
   // Donation
   const [donationAmount, setDonationAmount] = useState("");
+  const [donorEmail, setDonorEmail] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"mobile_money" | "visa">("mobile_money");
   const [mobileProvider, setMobileProvider] = useState<"airtel_money" | "mtn_momo">("mtn_momo");
   const [mobileMoneyNumber, setMobileMoneyNumber] = useState("");
@@ -49,6 +50,7 @@ const OfferHelpModal = ({ isOpen, onClose, request }: Props) => {
     setExpertiseDetails("");
     setVehicleType("");
     setDonationAmount("");
+    setDonorEmail("");
     setPaymentMethod("mobile_money");
     setMobileProvider("mtn_momo");
     setMobileMoneyNumber("");
@@ -95,6 +97,10 @@ const OfferHelpModal = ({ isOpen, onClose, request }: Props) => {
         showToast("Please enter a valid donation amount.", "error");
         return;
       }
+      if (!donorEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(donorEmail.trim())) {
+        showToast("Please enter a valid email address so we can notify you when funds are delivered.", "error");
+        return;
+      }
       if (paymentMethod === "mobile_money" && !mobileMoneyNumber.trim()) {
         showToast("Please enter your mobile money number.", "error");
         return;
@@ -121,6 +127,7 @@ const OfferHelpModal = ({ isOpen, onClose, request }: Props) => {
       payload.vehicle_type = vehicleType.trim();
     } else if (offerType === "donation") {
       payload.donation_amount = Number(donationAmount);
+      payload.donor_email = donorEmail.trim();
       payload.payment_method = paymentMethod;
       if (paymentMethod === "mobile_money") {
         payload.mobile_money_provider = mobileProvider;
@@ -231,6 +238,28 @@ const OfferHelpModal = ({ isOpen, onClose, request }: Props) => {
             </p>
           </div>
 
+          {/* Show donation receiving details if available */}
+          {request.payment_type && (
+            <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 space-y-1.5">
+              <p className="text-xs font-semibold text-blue-700 uppercase tracking-wider">Where to send your donation</p>
+              {request.payment_type === "bank" ? (
+                <div className="text-sm text-blue-900 space-y-0.5">
+                  <p><span className="font-medium">Bank:</span> {request.bank_name}</p>
+                  <p><span className="font-medium">Account Name:</span> {request.bank_account_name}</p>
+                  <p><span className="font-medium">Account Number:</span> {request.bank_account_number}</p>
+                </div>
+              ) : (
+                <div className="text-sm text-blue-900 space-y-0.5">
+                  <p><span className="font-medium">Provider:</span> {request.receiving_mobile_provider === "mtn_momo" ? "MTN MoMo" : "Airtel Money"}</p>
+                  <p><span className="font-medium">Number:</span> {request.receiving_mobile_number}</p>
+                </div>
+              )}
+              <p className="text-xs text-blue-600 pt-0.5">
+                Send your donation to the CommunityAid admin account — they will forward it to the recipient.
+              </p>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-1.5">
@@ -325,6 +354,23 @@ const OfferHelpModal = ({ isOpen, onClose, request }: Props) => {
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
                   placeholder="e.g. 50000"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                  Your Email <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={donorEmail}
+                  onChange={(e) => setDonorEmail(e.target.value)}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                  placeholder="you@example.com"
+                />
+                <p className="mt-1 text-xs text-slate-400">
+                  You'll receive an email confirmation when your funds reach the recipient.
+                </p>
               </div>
 
               <div>

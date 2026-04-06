@@ -8,6 +8,10 @@ import {
   deactivateUser,
   createDonation,
   getAllDonations,
+  getAllDisbursements,
+  markDisbursed,
+  promoteToAdmin,
+  demoteFromAdmin,
 } from "../api/admin";
 import { useGlobalToast } from "../components/layout/Layout";
 import type { CreateDonationInput } from "../types";
@@ -109,6 +113,62 @@ export function useCreateDonation() {
         err.message || "Failed to log donation. Please try again.",
         "error"
       );
+    },
+  });
+}
+
+export function useAdminDisbursements(status?: "pending" | "disbursed") {
+  return useQuery({
+    queryKey: ["admin-disbursements", status],
+    queryFn: () => getAllDisbursements(status ? { status } : undefined),
+  });
+}
+
+export function useMarkDisbursed() {
+  const queryClient = useQueryClient();
+  const { showToast } = useGlobalToast();
+
+  return useMutation({
+    mutationFn: (id: string) => markDisbursed(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-disbursements"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-stats"] });
+      showToast("Funds marked as disbursed. Emails sent.", "success");
+    },
+    onError: (err: Error) => {
+      showToast(err.message || "Failed to disburse funds.", "error");
+    },
+  });
+}
+
+export function usePromoteToAdmin() {
+  const queryClient = useQueryClient();
+  const { showToast } = useGlobalToast();
+
+  return useMutation({
+    mutationFn: (id: string) => promoteToAdmin(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      showToast("User promoted to admin.", "success");
+    },
+    onError: (err: Error) => {
+      showToast(err.message || "Failed to promote user.", "error");
+    },
+  });
+}
+
+export function useDemoteFromAdmin() {
+  const queryClient = useQueryClient();
+  const { showToast } = useGlobalToast();
+
+  return useMutation({
+    mutationFn: (id: string) => demoteFromAdmin(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      showToast("Admin demoted to community member.", "info");
+    },
+    onError: (err: Error) => {
+      showToast(err.message || "Failed to demote user.", "error");
     },
   });
 }

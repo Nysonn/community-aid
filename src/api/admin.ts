@@ -4,6 +4,7 @@ import type {
   User,
   EmergencyRequest,
   Donation,
+  Disbursement,
   DashboardStats,
   CreateDonationInput,
 } from "../types";
@@ -68,5 +69,29 @@ export async function getAllDonations(params?: {
   page_size?: number;
 }): Promise<Donation[]> {
   const response = await apiClient.get("/admin/donations", { params });
+  return response.data.data;
+}
+
+export async function getAllDisbursements(params?: {
+  status?: "pending" | "disbursed";
+  page?: number;
+  page_size?: number;
+}): Promise<Disbursement[]> {
+  const response = await apiClient.get("/admin/disbursements", { params });
+  return response.data.data;
+}
+
+export async function markDisbursed(id: string): Promise<Disbursement> {
+  const response = await apiClient.post(`/admin/disbursements/${id}/disburse`);
+  return response.data.data;
+}
+
+export async function promoteToAdmin(id: string): Promise<User> {
+  const response = await apiClient.put(`/admin/users/${id}/promote`);
+  return response.data.data;
+}
+
+export async function demoteFromAdmin(id: string): Promise<User> {
+  const response = await apiClient.put(`/admin/users/${id}/demote`);
   return response.data.data;
 }

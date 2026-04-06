@@ -11,6 +11,10 @@ import {
   useActivateUser,
   useDeactivateUser,
   useAdminDonations,
+  useAdminDisbursements,
+  useMarkDisbursed,
+  usePromoteToAdmin,
+  useDemoteFromAdmin,
 } from "../hooks/useAdmin";
 import { useApproveRequest, useRejectRequest } from "../hooks/useRequests";
 import { useUpdateOfferStatus } from "../hooks/useOffers";
@@ -453,91 +457,115 @@ function OffersTab() {
 
 function UsersTab() {
   const { data: allUsers = [], isLoading } = useAdminUsers();
-  const users = allUsers.filter((u) => u.role !== "admin");
+  const members = allUsers.filter((u) => u.role !== "admin");
+  const admins = allUsers.filter((u) => u.role === "admin");
   const activateMutation = useActivateUser();
   const deactivateMutation = useDeactivateUser();
+  const promoteMutation = usePromoteToAdmin();
+  const demoteMutation = useDemoteFromAdmin();
 
   return (
-    <div>
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">
-        Community Members
-      </h2>
-      {isLoading ? (
-        <TableWrap>
-          <THead columns={["Full Name", "Email", "Phone", "Status", "Joined", "Actions"]} />
-          <tbody>
-            {Array.from({ length: 5 }).map((_, i) => (
-              <TableRowSkeleton key={i} cols={[4, 5, 4, 3, 4, 3]} />
-            ))}
-          </tbody>
-        </TableWrap>
-      ) : users.length === 0 ? (
-        <p className="text-gray-400 text-sm py-8 text-center">
-          No community members found.
+    <div className="space-y-8">
+      {/* ── Admin accounts ── */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-900 mb-1">Admin Accounts</h2>
+        <p className="text-sm text-slate-400 mb-4">
+          Promote a community member to admin using the table below. Admins can approve requests and disburse funds.
         </p>
-      ) : (
-        <TableWrap>
-          <THead
-            columns={[
-              "Full Name",
-              "Email",
-              "Phone",
-              "Status",
-              "Joined",
-              "Actions",
-            ]}
-          />
-          <tbody className="divide-y divide-gray-50 bg-white">
-            {users.map((u) => (
-              <tr key={u.id} className="hover:bg-slate-50/60 transition-colors">
-                <td className="px-4 py-3.5 font-semibold text-slate-900">
-                  {u.full_name}
-                </td>
-                <td className="px-4 py-3.5 text-slate-500">{u.email}</td>
-                <td className="px-4 py-3.5 text-slate-500">{u.phone_number}</td>
-                <td className="px-4 py-3.5">
-                  <Badge
-                    label={u.is_active ? "Active" : "Inactive"}
-                    className={
-                      u.is_active
-                        ? "bg-green-100 text-green-700"
-                        : "bg-gray-100 text-gray-500"
-                    }
-                  />
-                </td>
-                <td className="px-4 py-3.5 text-slate-400 whitespace-nowrap text-xs">
-                  {formatDate(u.created_at)}
-                </td>
-                <td className="px-4 py-3.5">
-                  {u.is_active ? (
+        {isLoading ? (
+          <TableWrap>
+            <THead columns={["Full Name", "Email", "Actions"]} />
+            <tbody>{Array.from({ length: 2 }).map((_, i) => <TableRowSkeleton key={i} cols={[4, 6, 3]} />)}</tbody>
+          </TableWrap>
+        ) : admins.length === 0 ? (
+          <p className="text-gray-400 text-sm py-4 text-center">No admin accounts yet.</p>
+        ) : (
+          <TableWrap>
+            <THead columns={["Full Name", "Email", "Actions"]} />
+            <tbody className="divide-y divide-gray-50 bg-white">
+              {admins.map((u) => (
+                <tr key={u.id} className="hover:bg-slate-50/60 transition-colors">
+                  <td className="px-4 py-3.5 font-semibold text-slate-900 flex items-center gap-2">
+                    {u.full_name}
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-purple-100 text-purple-700 uppercase tracking-wider">Admin</span>
+                  </td>
+                  <td className="px-4 py-3.5 text-slate-500">{u.email}</td>
+                  <td className="px-4 py-3.5">
                     <button
-                      onClick={() => deactivateMutation.mutate(u.id)}
-                      disabled={
-                        deactivateMutation.isPending &&
-                        deactivateMutation.variables === u.id
-                      }
-                      className="px-3 py-1 text-xs font-semibold text-white bg-red-600 rounded-full hover:bg-red-700 disabled:opacity-50 transition-all"
+                      onClick={() => demoteMutation.mutate(u.id)}
+                      disabled={demoteMutation.isPending && demoteMutation.variables === u.id}
+                      className="px-3 py-1 text-xs font-semibold border border-gray-200 text-slate-600 rounded-full hover:bg-gray-50 disabled:opacity-50 transition-all"
                     >
-                      Deactivate
+                      Remove Admin
                     </button>
-                  ) : (
-                    <button
-                      onClick={() => activateMutation.mutate(u.id)}
-                      disabled={
-                        activateMutation.isPending &&
-                        activateMutation.variables === u.id
-                      }
-                      className="px-3 py-1 text-xs font-semibold text-white bg-emerald-600 rounded-full hover:bg-emerald-700 disabled:opacity-50 transition-all"
-                    >
-                      Activate
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </TableWrap>
-      )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </TableWrap>
+        )}
+      </div>
+
+      {/* ── Community members ── */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Community Members</h2>
+        {isLoading ? (
+          <TableWrap>
+            <THead columns={["Full Name", "Email", "Phone", "Status", "Joined", "Actions"]} />
+            <tbody>{Array.from({ length: 5 }).map((_, i) => <TableRowSkeleton key={i} cols={[4, 5, 4, 3, 4, 3]} />)}</tbody>
+          </TableWrap>
+        ) : members.length === 0 ? (
+          <p className="text-gray-400 text-sm py-8 text-center">No community members found.</p>
+        ) : (
+          <TableWrap>
+            <THead columns={["Full Name", "Email", "Phone", "Status", "Joined", "Actions"]} />
+            <tbody className="divide-y divide-gray-50 bg-white">
+              {members.map((u) => (
+                <tr key={u.id} className="hover:bg-slate-50/60 transition-colors">
+                  <td className="px-4 py-3.5 font-semibold text-slate-900">{u.full_name}</td>
+                  <td className="px-4 py-3.5 text-slate-500">{u.email}</td>
+                  <td className="px-4 py-3.5 text-slate-500">{u.phone_number}</td>
+                  <td className="px-4 py-3.5">
+                    <Badge
+                      label={u.is_active ? "Active" : "Inactive"}
+                      className={u.is_active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}
+                    />
+                  </td>
+                  <td className="px-4 py-3.5 text-slate-400 whitespace-nowrap text-xs">{formatDate(u.created_at)}</td>
+                  <td className="px-4 py-3.5">
+                    <div className="flex items-center gap-1.5">
+                      {u.is_active ? (
+                        <button
+                          onClick={() => deactivateMutation.mutate(u.id)}
+                          disabled={deactivateMutation.isPending && deactivateMutation.variables === u.id}
+                          className="px-3 py-1 text-xs font-semibold text-white bg-red-600 rounded-full hover:bg-red-700 disabled:opacity-50 transition-all"
+                        >
+                          Deactivate
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => activateMutation.mutate(u.id)}
+                          disabled={activateMutation.isPending && activateMutation.variables === u.id}
+                          className="px-3 py-1 text-xs font-semibold text-white bg-emerald-600 rounded-full hover:bg-emerald-700 disabled:opacity-50 transition-all"
+                        >
+                          Activate
+                        </button>
+                      )}
+                      <button
+                        onClick={() => promoteMutation.mutate(u.id)}
+                        disabled={promoteMutation.isPending && promoteMutation.variables === u.id}
+                        className="px-3 py-1 text-xs font-semibold border border-purple-200 text-purple-700 rounded-full hover:bg-purple-50 disabled:opacity-50 transition-all"
+                      >
+                        Make Admin
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </TableWrap>
+        )}
+      </div>
     </div>
   );
 }
@@ -596,9 +624,112 @@ function DonationsTab() {
   );
 }
 
+// ─── Disbursements Tab ─────────────────────────────────────────────────────────
+
+function DisbursementsTab() {
+  const [statusFilter, setStatusFilter] = useState<"" | "pending" | "disbursed">("");
+  const { data: disbursements = [], isLoading } = useAdminDisbursements(statusFilter || undefined);
+  const disburseMutation = useMarkDisbursed();
+
+  return (
+    <div>
+      <h2 className="text-lg font-semibold text-gray-900 mb-1">Fund Disbursements</h2>
+      <p className="text-sm text-slate-400 mb-4">
+        Donations collected by the admin are listed here. Mark them as disbursed once you have
+        forwarded the funds to the request maker's account. Both the donor and recipient will receive an email.
+      </p>
+
+      {/* Filter */}
+      <div className="flex gap-2 mb-5">
+        {(["", "pending", "disbursed"] as const).map((s) => (
+          <button
+            key={s}
+            onClick={() => setStatusFilter(s)}
+            className={`px-4 py-1.5 rounded-full text-xs font-semibold border-2 transition-all
+              ${statusFilter === s
+                ? "border-blue-500 text-blue-700 bg-blue-50"
+                : "border-gray-200 text-slate-500 hover:border-gray-300 hover:bg-gray-50"
+              }`}
+          >
+            {s === "" ? "All" : s.charAt(0).toUpperCase() + s.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {isLoading ? (
+        <TableWrap>
+          <THead columns={["Request", "Donor", "Amount", "Send To", "Payment Details", "Status", "Actions"]} />
+          <tbody>{Array.from({ length: 4 }).map((_, i) => <TableRowSkeleton key={i} cols={[5, 4, 3, 4, 5, 3, 3]} />)}</tbody>
+        </TableWrap>
+      ) : disbursements.length === 0 ? (
+        <p className="text-gray-400 text-sm py-8 text-center">No disbursements found.</p>
+      ) : (
+        <TableWrap>
+          <THead columns={["Request", "Donor", "Amount", "Send To", "Payment Details", "Status", "Actions"]} />
+          <tbody className="divide-y divide-gray-50 bg-white">
+            {disbursements.map((d) => (
+              <tr key={d.id} className="hover:bg-slate-50/60 transition-colors">
+                <td className="px-4 py-3.5 max-w-[160px] truncate font-semibold text-slate-900 text-xs">
+                  {d.request_title}
+                </td>
+                <td className="px-4 py-3.5">
+                  <p className="text-sm font-medium text-slate-900">{d.donor_name}</p>
+                  <p className="text-xs text-slate-400">{d.donor_email}</p>
+                </td>
+                <td className="px-4 py-3.5 font-semibold text-slate-700 whitespace-nowrap">
+                  {formatUGX(d.amount)}
+                </td>
+                <td className="px-4 py-3.5 text-sm text-slate-700">{d.recipient_name}</td>
+                <td className="px-4 py-3.5 text-xs text-slate-500">
+                  {d.payment_type === "bank" ? (
+                    <div className="space-y-0.5">
+                      <p><span className="font-medium">Bank:</span> {d.bank_name}</p>
+                      <p><span className="font-medium">Account:</span> {d.bank_account_number}</p>
+                      <p><span className="font-medium">Name:</span> {d.bank_account_name}</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-0.5">
+                      <p><span className="font-medium">Provider:</span> {d.receiving_mobile_provider === "mtn_momo" ? "MTN MoMo" : "Airtel Money"}</p>
+                      <p><span className="font-medium">Number:</span> {d.receiving_mobile_number}</p>
+                    </div>
+                  )}
+                </td>
+                <td className="px-4 py-3.5">
+                  <Badge
+                    label={d.status}
+                    className={d.status === "pending" ? "bg-yellow-100 text-yellow-700" : "bg-green-100 text-green-700"}
+                  />
+                  {d.disbursed_at && (
+                    <p className="text-[10px] text-slate-400 mt-1">{formatDate(d.disbursed_at)}</p>
+                  )}
+                </td>
+                <td className="px-4 py-3.5">
+                  {d.status === "pending" ? (
+                    <button
+                      onClick={() => disburseMutation.mutate(d.id)}
+                      disabled={disburseMutation.isPending && disburseMutation.variables === d.id}
+                      className="px-3 py-1.5 text-xs font-semibold text-white bg-emerald-600 rounded-full hover:bg-emerald-700 disabled:opacity-50 transition-all whitespace-nowrap"
+                    >
+                      Mark Disbursed
+                    </button>
+                  ) : (
+                    <span className="px-3 py-1 text-xs font-semibold text-gray-500 bg-gray-100 rounded-full">
+                      Done
+                    </span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </TableWrap>
+      )}
+    </div>
+  );
+}
+
 // ─── Main page ─────────────────────────────────────────────────────────────────
 
-type Tab = "overview" | "requests" | "offers" | "users" | "donations";
+type Tab = "overview" | "requests" | "offers" | "users" | "donations" | "disbursements";
 
 const SIDEBAR_ITEMS: {
   id: Tab;
@@ -656,6 +787,16 @@ const SIDEBAR_ITEMS: {
       </svg>
     ),
   },
+  {
+    id: "disbursements",
+    label: "Disbursements",
+    subtitle: "Send funds to recipients",
+    icon: (
+      <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+      </svg>
+    ),
+  },
 ];
 
 const AdminDashboardPage = () => {
@@ -675,6 +816,7 @@ const AdminDashboardPage = () => {
     offers: <OffersTab />,
     users: <UsersTab />,
     donations: <DonationsTab />,
+    disbursements: <DisbursementsTab />,
   }[activeTab];
 
   const handleTabSelect = (id: Tab) => {

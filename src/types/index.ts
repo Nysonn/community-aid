@@ -23,6 +23,16 @@ export interface EmergencyRequest {
   latitude?: number;
   longitude?: number;
   media_urls?: string[];
+  // Fundraising
+  target_amount?: number;
+  amount_received: number;
+  // Payment receiving details (where donors should send money)
+  payment_type?: "bank" | "mobile_money";
+  bank_account_name?: string;
+  bank_account_number?: string;
+  bank_name?: string;
+  receiving_mobile_provider?: "mtn_momo" | "airtel_money";
+  receiving_mobile_number?: string;
   created_at: string;
   updated_at: string;
 }
@@ -42,6 +52,7 @@ export interface Offer {
   vehicle_type?: string;
   // donation
   donation_amount?: number;
+  donor_email?: string;
   payment_method?: "mobile_money" | "visa";
   mobile_money_provider?: string;
   mobile_money_masked?: string;
@@ -59,6 +70,26 @@ export interface Donation {
   donor_name: string;
   amount: number;
   date: string;
+}
+
+export interface Disbursement {
+  id: string;
+  offer_id: string;
+  request_id: string;
+  donor_name: string;
+  donor_email: string;
+  amount: number;
+  recipient_name: string;
+  payment_type: "bank" | "mobile_money";
+  bank_account_name?: string;
+  bank_account_number?: string;
+  bank_name?: string;
+  receiving_mobile_provider?: string;
+  receiving_mobile_number?: string;
+  status: "pending" | "disbursed";
+  disbursed_at?: string;
+  created_at: string;
+  request_title: string;
 }
 
 export interface RegisterUserInput {
@@ -94,6 +125,15 @@ export interface CreateRequestInput {
   latitude?: number | string;
   longitude?: number | string;
   media?: File[];
+  // Fundraising
+  target_amount?: number;
+  // Payment receiving details
+  payment_type?: "bank" | "mobile_money";
+  bank_account_name?: string;
+  bank_account_number?: string;
+  bank_name?: string;
+  receiving_mobile_provider?: "mtn_momo" | "airtel_money";
+  receiving_mobile_number?: string;
 }
 
 export interface CreateOfferInput {
@@ -109,6 +149,7 @@ export interface CreateOfferInput {
   vehicle_type?: string;
   // donation (all methods)
   donation_amount?: number;
+  donor_email?: string;
   payment_method?: "mobile_money" | "visa";
   // mobile money
   mobile_money_provider?: "airtel_money" | "mtn_momo";

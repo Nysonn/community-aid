@@ -40,6 +40,16 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
   const [files, setFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
+  // Fundraising
+  const [targetAmount, setTargetAmount] = useState("");
+  // Payment receiving details
+  const [paymentType, setPaymentType] = useState<"bank" | "mobile_money" | "">("");
+  const [bankAccountName, setBankAccountName] = useState("");
+  const [bankAccountNumber, setBankAccountNumber] = useState("");
+  const [bankName, setBankName] = useState("");
+  const [receivingMobileProvider, setReceivingMobileProvider] = useState<"mtn_momo" | "airtel_money">("mtn_momo");
+  const [receivingMobileNumber, setReceivingMobileNumber] = useState("");
+
   // Geolocation state
   const [detectedLat, setDetectedLat] = useState<number | null>(null);
   const [detectedLng, setDetectedLng] = useState<number | null>(null);
@@ -86,6 +96,14 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
           ? String(editRequest.longitude)
           : ""
       );
+      // Prefill payment receiving fields in edit mode
+      setTargetAmount(editRequest.target_amount != null ? String(editRequest.target_amount) : "");
+      setPaymentType(editRequest.payment_type ?? "");
+      setBankAccountName(editRequest.bank_account_name ?? "");
+      setBankAccountNumber(editRequest.bank_account_number ?? "");
+      setBankName(editRequest.bank_name ?? "");
+      setReceivingMobileProvider((editRequest.receiving_mobile_provider as "mtn_momo" | "airtel_money") ?? "mtn_momo");
+      setReceivingMobileNumber(editRequest.receiving_mobile_number ?? "");
     } else {
       setTitle("");
       setDescription("");
@@ -99,6 +117,13 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
       setLocationStatus("idle");
       setFiles([]);
       setPreviewUrls([]);
+      setTargetAmount("");
+      setPaymentType("");
+      setBankAccountName("");
+      setBankAccountNumber("");
+      setBankName("");
+      setReceivingMobileProvider("mtn_momo");
+      setReceivingMobileNumber("");
     }
   }, [editRequest, isOpen]);
 
@@ -259,6 +284,20 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
       return;
     }
 
+    // Validate payment fields when a payment type is chosen
+    if (paymentType === "bank") {
+      if (!bankAccountName.trim() || !bankAccountNumber.trim() || !bankName.trim()) {
+        showToast("Please fill in all bank account details.", "error");
+        return;
+      }
+    }
+    if (paymentType === "mobile_money") {
+      if (!receivingMobileNumber.trim()) {
+        showToast("Please enter a mobile money number.", "error");
+        return;
+      }
+    }
+
     // Refresh the token before any API call so we never send a stale token.
     const freshToken = await getToken();
     if (freshToken) {
@@ -312,6 +351,8 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
       return;
     }
 
+    const parsedTargetAmount = targetAmount.trim() ? Number(targetAmount) : undefined;
+
     createRequestMutation.mutate({
       title: trimmedTitle,
       description: trimmedDescription,
@@ -320,6 +361,17 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
       latitude: coordinates.latitude,
       longitude: coordinates.longitude,
       media: files,
+      ...(parsedTargetAmount && parsedTargetAmount > 0 && { target_amount: parsedTargetAmount }),
+      ...(paymentType && { payment_type: paymentType }),
+      ...(paymentType === "bank" && {
+        bank_account_name: bankAccountName.trim(),
+        bank_account_number: bankAccountNumber.trim(),
+        bank_name: bankName.trim(),
+      }),
+      ...(paymentType === "mobile_money" && {
+        receiving_mobile_provider: receivingMobileProvider,
+        receiving_mobile_number: receivingMobileNumber.trim(),
+      }),
     }, {
       onSuccess: () => { onSuccess(); onClose(); },
       onError: async (err) => {
@@ -583,6 +635,132 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
               )}
             </div>
           )}
+
+          {/* ── Fundraising ──────────────────────────────────────── */}
+          <div className="pt-1">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="h-px flex-1 bg-gray-100" />
+              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Fundraising (optional)</span>
+              <div className="h-px flex-1 bg-gray-100" />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                Target Amount (UGX)
+              </label>
+              <input
+                type="number"
+                min="0"
+                step="any"
+                value={targetAmount}
+                onChange={(e) => setTargetAmount(e.target.value)}
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                placeholder="e.g. 500000"
+              />
+            </div>
+          </div>
+
+          {/* ── Payment Receiving Details ─────────────────────────── */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="h-px flex-1 bg-gray-100" />
+              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Where to receive donations</span>
+              <div className="h-px flex-1 bg-gray-100" />
+            </div>
+            <p className="text-xs text-slate-400 mb-3">
+              Add your payment details so donors know where to send money. This will be shown publicly on your request card.
+            </p>
+
+            <div className="grid grid-cols-3 gap-2 mb-4">
+              {[
+                { value: "", label: "Not specified" },
+                { value: "bank", label: "Bank (VISA)" },
+                { value: "mobile_money", label: "Mobile Money" },
+              ].map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setPaymentType(opt.value as "bank" | "mobile_money" | "")}
+                  className={`py-2 px-2 rounded-xl text-xs font-semibold border-2 transition-all duration-150
+                    ${paymentType === opt.value
+                      ? "border-blue-500 text-blue-700 bg-blue-50"
+                      : "border-gray-200 text-slate-500 hover:border-gray-300 hover:bg-gray-50"
+                    }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+
+            {paymentType === "bank" && (
+              <div className="space-y-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">Account Holder Name <span className="text-red-500">*</span></label>
+                  <input
+                    type="text"
+                    value={bankAccountName}
+                    onChange={(e) => setBankAccountName(e.target.value)}
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Full name on account"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">Account Number <span className="text-red-500">*</span></label>
+                  <input
+                    type="text"
+                    value={bankAccountNumber}
+                    onChange={(e) => setBankAccountNumber(e.target.value)}
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="e.g. 1234567890"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">Bank Name <span className="text-red-500">*</span></label>
+                  <input
+                    type="text"
+                    value={bankName}
+                    onChange={(e) => setBankName(e.target.value)}
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="e.g. Stanbic Bank"
+                  />
+                </div>
+              </div>
+            )}
+
+            {paymentType === "mobile_money" && (
+              <div className="space-y-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">Provider <span className="text-red-500">*</span></label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {(["mtn_momo", "airtel_money"] as const).map((p) => (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => setReceivingMobileProvider(p)}
+                        className={`py-2 rounded-xl text-xs font-semibold border-2 transition-all
+                          ${receivingMobileProvider === p
+                            ? "border-yellow-400 text-yellow-700 bg-yellow-50"
+                            : "border-gray-200 text-slate-500 hover:border-gray-300"
+                          }`}
+                      >
+                        {p === "mtn_momo" ? "MTN MoMo" : "Airtel Money"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">Mobile Number <span className="text-red-500">*</span></label>
+                  <input
+                    type="tel"
+                    value={receivingMobileNumber}
+                    onChange={(e) => setReceivingMobileNumber(e.target.value)}
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="e.g. 0771234567"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
 
           <div className="flex justify-end gap-3 pt-2 border-t border-gray-50">
             <button

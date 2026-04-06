@@ -29,6 +29,13 @@ interface Props {
   request: EmergencyRequest;
 }
 
+// Detect if a URL is an image (covers Cloudinary URLs and common image extensions)
+function isImageUrl(url: string): boolean {
+  const lower = url.toLowerCase();
+  if (lower.includes("/image/upload/")) return true;
+  return /\.(jpg|jpeg|png|webp|gif|avif|svg)(\?|$)/.test(lower);
+}
+
 const RequestCard = ({ request }: Props) => {
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -40,12 +47,41 @@ const RequestCard = ({ request }: Props) => {
 
   const isApproved = request.status === "approved";
 
+  const firstMedia = request.media_urls?.[0];
+  const thumbnailUrl = firstMedia && isImageUrl(firstMedia) ? firstMedia : null;
+  const hasPdfOnly = firstMedia && !thumbnailUrl;
+
+  // Progress bar
+  const target = request.target_amount;
+  const received = request.amount_received ?? 0;
+  const progressPct = target && target > 0 ? Math.min(100, Math.round((received / target) * 100)) : null;
+
   return (
     <>
       <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden flex flex-col shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 group">
 
-        {/* Type colour stripe */}
-        <div className={`h-[3px] w-full ${TYPE_STRIPE[request.type]}`} />
+        {/* Thumbnail or type stripe */}
+        {thumbnailUrl ? (
+          <div className="relative h-36 w-full overflow-hidden bg-slate-100">
+            <img
+              src={thumbnailUrl}
+              alt={request.title}
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
+            <div className={`absolute top-0 left-0 right-0 h-[3px] ${TYPE_STRIPE[request.type]}`} />
+          </div>
+        ) : hasPdfOnly ? (
+          <div className="relative h-20 w-full bg-slate-50 flex items-center justify-center gap-2">
+            <svg className="h-8 w-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">PDF attached</span>
+            <div className={`absolute top-0 left-0 right-0 h-[3px] ${TYPE_STRIPE[request.type]}`} />
+          </div>
+        ) : (
+          <div className={`h-[3px] w-full ${TYPE_STRIPE[request.type]}`} />
+        )}
 
         <div className="p-5 flex flex-col gap-3 flex-1">
 
@@ -74,6 +110,23 @@ const RequestCard = ({ request }: Props) => {
           <p className="text-sm text-slate-500 line-clamp-2 leading-relaxed -mt-0.5">
             {request.description}
           </p>
+
+          {/* Fundraising progress bar */}
+          {progressPct !== null && (
+            <div className="space-y-1">
+              <div className="flex justify-between text-xs text-slate-500">
+                <span className="font-medium text-emerald-600">UGX {received.toLocaleString("en-UG")} raised</span>
+                <span>of UGX {target!.toLocaleString("en-UG")}</span>
+              </div>
+              <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-500"
+                  style={{ width: `${progressPct}%` }}
+                />
+              </div>
+              <p className="text-[10px] text-slate-400 text-right">{progressPct}% funded</p>
+            </div>
+          )}
 
           {/* Location */}
           <p className="text-xs text-slate-400 flex items-center gap-1.5">
