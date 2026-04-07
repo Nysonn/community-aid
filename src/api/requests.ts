@@ -21,6 +21,16 @@ function extractResponseData<T>(payload: unknown): T {
   return payload as T;
 }
 
+function appendFormValue(
+  formData: FormData,
+  key: string,
+  value: string | number | undefined | null
+) {
+  if (value !== undefined && value !== null && value !== "") {
+    formData.append(key, String(value));
+  }
+}
+
 function buildCreateRequestFormData(input: CreateRequestInput): FormData {
   const formData = new FormData();
 
@@ -29,13 +39,23 @@ function buildCreateRequestFormData(input: CreateRequestInput): FormData {
   formData.append("type", input.type);
   formData.append("location_name", input.location_name.trim());
 
-  if (input.latitude !== undefined && input.latitude !== null && input.latitude !== "") {
-    formData.append("latitude", String(input.latitude));
-  }
-
-  if (input.longitude !== undefined && input.longitude !== null && input.longitude !== "") {
-    formData.append("longitude", String(input.longitude));
-  }
+  appendFormValue(formData, "latitude", input.latitude);
+  appendFormValue(formData, "longitude", input.longitude);
+  appendFormValue(formData, "target_amount", input.target_amount);
+  appendFormValue(formData, "payment_type", input.payment_type);
+  appendFormValue(formData, "bank_account_name", input.bank_account_name);
+  appendFormValue(formData, "bank_account_number", input.bank_account_number);
+  appendFormValue(formData, "bank_name", input.bank_name);
+  appendFormValue(
+    formData,
+    "receiving_mobile_provider",
+    input.receiving_mobile_provider
+  );
+  appendFormValue(
+    formData,
+    "receiving_mobile_number",
+    input.receiving_mobile_number
+  );
 
   input.media?.forEach((file) => {
     formData.append("media", file);

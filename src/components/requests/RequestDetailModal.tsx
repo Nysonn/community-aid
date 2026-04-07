@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "../../store";
@@ -17,6 +17,7 @@ import { addPendingAction } from "../../store/slices/offlineSlice";
 import { useGlobalToast } from "../layout/Layout";
 import CreateRequestModal from "./CreateRequestModal";
 import { TYPE_BADGE, STATUS_BADGE } from "./RequestCard";
+import { canRequestReceiveDonations } from "../../utils";
 import type { CreateOfferInput, Offer } from "../../types";
 
 interface Props {
@@ -105,6 +106,7 @@ const RequestDetailModal = ({ requestId, onClose }: Props) => {
   const [vehicleType, setVehicleType] = useState("");
   // Donation
   const [donationAmount, setDonationAmount] = useState("");
+  const [donorEmail, setDonorEmail] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"mobile_money" | "visa">("mobile_money");
   const [mobileProvider, setMobileProvider] = useState<"airtel_money" | "mtn_momo">("mtn_momo");
   const [mobileMoneyNumber, setMobileMoneyNumber] = useState("");
@@ -116,11 +118,18 @@ const RequestDetailModal = ({ requestId, onClose }: Props) => {
 
   const { data: request, isLoading, isError } = useRequest(requestId ?? undefined);
   const { data: offers = [] } = useOffersByRequest(requestId ?? undefined);
+  const canReceiveDonations = request ? canRequestReceiveDonations(request) : false;
 
   const approveMutation = useApproveRequest();
   const rejectMutation = useRejectRequest();
   const offerStatusMutation = useUpdateOfferStatus();
   const submitOfferMutation = useCreateOffer();
+
+  useEffect(() => {
+    if (!canReceiveDonations && offerType === "donation") {
+      setOfferType("transport");
+    }
+  }, [canReceiveDonations, offerType]);
 
   const handleClose = () => {
     setShowEditModal(false);
@@ -142,7 +151,15 @@ const RequestDetailModal = ({ requestId, onClose }: Props) => {
     } else if (offerType === "transport") {
       payload.vehicle_type = vehicleType.trim();
     } else if (offerType === "donation") {
+      if (!request || !canReceiveDonations) {
+        showToast(
+          "This request cannot receive donations yet because payout details were not set.",
+          "error"
+        );
+        return;
+      }
       payload.donation_amount = Number(donationAmount);
+      payload.donor_email = donorEmail.trim();
       payload.payment_method = paymentMethod;
       if (paymentMethod === "mobile_money") {
         payload.mobile_money_provider = mobileProvider;
@@ -159,10 +176,11 @@ const RequestDetailModal = ({ requestId, onClose }: Props) => {
     const resetForm = () => {
       setResponderName("");
       setResponderContact("");
-      setOfferType("donation");
+      setOfferType(canReceiveDonations ? "donation" : "transport");
       setExpertiseDetails("");
       setVehicleType("");
       setDonationAmount("");
+      setDonorEmail("");
       setPaymentMethod("mobile_money");
       setMobileProvider("mtn_momo");
       setMobileMoneyNumber("");
@@ -473,10 +491,43 @@ const RequestDetailModal = ({ requestId, onClose }: Props) => {
                           className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
                         >
                           <option value="transport">Transport</option>
-                          <option value="donation">Donation</option>
+                          {canReceiveDonations && <option value="donation">Donation</option>}
                           <option value="expertise">Expertise</option>
                         </select>
                       </div>
+
+                      {canReceiveDonations ? (
+                        <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 space-y-1.5">
+                          <p className="text-xs font-semibold text-blue-700 uppercase tracking-wider">
+                            Where to send your donation
+                          </p>
+                          {request.payment_type === "bank" ? (
+                            <div className="text-sm text-blue-900 space-y-0.5">
+                              <p><span className="font-medium">Bank:</span> {request.bank_name}</p>
+                              <p><span className="font-medium">Account Name:</span> {request.bank_account_name}</p>
+                              <p><span className="font-medium">Account Number:</span> {request.bank_account_number}</p>
+                            </div>
+                          ) : (
+                            <div className="text-sm text-blue-900 space-y-0.5">
+                              <p><span className="font-medium">Provider:</span> {request.receiving_mobile_provider === "mtn_momo" ? "MTN MoMo" : "Airtel Money"}</p>
+                              <p><span className="font-medium">Number:</span> {request.receiving_mobile_number}</p>
+                            </div>
+                          )}
+                          <p className="text-xs text-blue-600 pt-0.5">
+                            Send your donation to the CommunityAid admin account — they will forward it to the recipient.
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 flex items-start gap-2.5">
+                          <svg className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3.75m0 3.75h.007v.008H12v-.008z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.29 3.86L1.82 18a2.25 2.25 0 001.93 3.37h16.5A2.25 2.25 0 0022.18 18L13.71 3.86a2.25 2.25 0 00-3.42 0z" />
+                          </svg>
+                          <p className="text-sm text-amber-800">
+                            Donations are not available for this request yet because payout details have not been added. You can still offer transport or expertise.
+                          </p>
+                        </div>
+                      )}
 
                       {offerType === "expertise" && (
                         <div>
@@ -525,6 +576,23 @@ const RequestDetailModal = ({ requestId, onClose }: Props) => {
                               className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm bg-white"
                               placeholder="e.g. 50000"
                             />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                              Your Email <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                              type="email"
+                              required
+                              value={donorEmail}
+                              onChange={(e) => setDonorEmail(e.target.value)}
+                              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm bg-white"
+                              placeholder="you@example.com"
+                            />
+                            <p className="mt-1 text-xs text-slate-400">
+                              You'll receive a confirmation when your funds reach the recipient.
+                            </p>
                           </div>
 
                           <div>

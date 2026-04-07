@@ -1,6 +1,7 @@
 import { useState } from "react";
 import OfferHelpModal from "../offers/OfferHelpModal";
 import RequestDetailModal from "./RequestDetailModal";
+import { canRequestReceiveDonations } from "../../utils";
 import type { EmergencyRequest } from "../../types";
 
 export const TYPE_BADGE: Record<EmergencyRequest["type"], string> = {
@@ -46,6 +47,7 @@ const RequestCard = ({ request }: Props) => {
   });
 
   const isApproved = request.status === "approved";
+  const canReceiveDonations = canRequestReceiveDonations(request);
 
   const firstMedia = request.media_urls?.[0];
   const thumbnailUrl = firstMedia && isImageUrl(firstMedia) ? firstMedia : null;
@@ -144,7 +146,9 @@ const RequestCard = ({ request }: Props) => {
                 <svg className="h-3.5 w-3.5 shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                Anyone can offer transport, donations, or expertise.
+                {canReceiveDonations
+                  ? "Anyone can offer transport, donations, or expertise."
+                  : "Anyone can offer transport or expertise. Donations open after payout details are added."}
               </div>
             ) : (
               <div className="inline-flex items-center gap-2 text-xs font-medium text-slate-400 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-xl w-full">

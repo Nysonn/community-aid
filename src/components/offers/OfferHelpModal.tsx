@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useCreateOffer } from "../../hooks/useOffers";
 import { savePendingAction } from "../../offline/db";
 import { addPendingAction } from "../../store/slices/offlineSlice";
 import { useGlobalToast } from "../layout/Layout";
+import { canRequestReceiveDonations } from "../../utils";
 import type { AppDispatch } from "../../store";
 import type { CreateOfferInput, EmergencyRequest, Offer } from "../../types";
 
@@ -13,20 +14,20 @@ interface Props {
   request: EmergencyRequest;
 }
 
-const OFFER_TYPES: Array<Offer["offer_type"]> = [
-  "transport",
-  "donation",
-  "expertise",
-];
-
 const OfferHelpModal = ({ isOpen, onClose, request }: Props) => {
   const dispatch = useDispatch<AppDispatch>();
   const { showToast } = useGlobalToast();
   const createOfferMutation = useCreateOffer();
+  const canReceiveDonations = canRequestReceiveDonations(request);
+  const availableOfferTypes: Array<Offer["offer_type"]> = canReceiveDonations
+    ? ["transport", "donation", "expertise"]
+    : ["transport", "expertise"];
 
   const [responderName, setResponderName] = useState("");
   const [responderContact, setResponderContact] = useState("");
-  const [offerType, setOfferType] = useState<Offer["offer_type"]>("donation");
+  const [offerType, setOfferType] = useState<Offer["offer_type"]>(
+    canReceiveDonations ? "donation" : "transport"
+  );
   // Expertise
   const [expertiseDetails, setExpertiseDetails] = useState("");
   // Transport
@@ -44,10 +45,16 @@ const OfferHelpModal = ({ isOpen, onClose, request }: Props) => {
   const [cardExpiryYear, setCardExpiryYear] = useState("");
   const [cardholderName, setCardholderName] = useState("");
 
+  useEffect(() => {
+    if (!canReceiveDonations && offerType === "donation") {
+      setOfferType("transport");
+    }
+  }, [canReceiveDonations, offerType]);
+
   const resetForm = () => {
     setResponderName("");
     setResponderContact("");
-    setOfferType("donation");
+    setOfferType(canReceiveDonations ? "donation" : "transport");
     setExpertiseDetails("");
     setVehicleType("");
     setDonationAmount("");
@@ -95,6 +102,13 @@ const OfferHelpModal = ({ isOpen, onClose, request }: Props) => {
       return;
     }
     if (offerType === "donation") {
+      if (!canReceiveDonations) {
+        showToast(
+          "This request cannot receive donations yet because payout details were not set.",
+          "error"
+        );
+        return;
+      }
       if (!donationAmount || Number(donationAmount) <= 0) {
         showToast("Please enter a valid donation amount.", "error");
         return;
@@ -249,8 +263,7 @@ const OfferHelpModal = ({ isOpen, onClose, request }: Props) => {
             </p>
           </div>
 
-          {/* Show donation receiving details if available */}
-          {request.payment_type && (
+          {canReceiveDonations ? (
             <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 space-y-1.5">
               <p className="text-xs font-semibold text-blue-700 uppercase tracking-wider">Where to send your donation</p>
               {request.payment_type === "bank" ? (
@@ -267,6 +280,16 @@ const OfferHelpModal = ({ isOpen, onClose, request }: Props) => {
               )}
               <p className="text-xs text-blue-600 pt-0.5">
                 Send your donation to the CommunityAid admin account — they will forward it to the recipient.
+              </p>
+            </div>
+          ) : (
+            <div className="rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 flex items-start gap-2.5">
+              <svg className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3.75m0 3.75h.007v.008H12v-.008z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.29 3.86L1.82 18a2.25 2.25 0 001.93 3.37h16.5A2.25 2.25 0 0022.18 18L13.71 3.86a2.25 2.25 0 00-3.42 0z" />
+              </svg>
+              <p className="text-sm text-amber-800">
+                Donations are not available for this request yet because payout details have not been added. You can still offer transport or expertise.
               </p>
             </div>
           )}
@@ -310,7 +333,7 @@ const OfferHelpModal = ({ isOpen, onClose, request }: Props) => {
               onChange={(e) => setOfferType(e.target.value as Offer["offer_type"])}
               className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
             >
-              {OFFER_TYPES.map((type) => (
+              {availableOfferTypes.map((type) => (
                 <option key={type} value={type}>
                   {type.charAt(0).toUpperCase() + type.slice(1)}
                 </option>

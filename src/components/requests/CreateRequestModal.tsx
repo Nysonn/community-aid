@@ -6,7 +6,7 @@ import { savePendingAction } from "../../offline/db";
 import { addPendingAction } from "../../store/slices/offlineSlice";
 import { useGlobalToast } from "../layout/Layout";
 import { tokenStore } from "../../api/tokenStore";
-import type { EmergencyRequest } from "../../types";
+import type { CreateRequestInput, EmergencyRequest } from "../../types";
 import type { AppDispatch } from "../../store";
 
 interface Props {
@@ -23,6 +23,17 @@ type LocationStatus = "idle" | "detecting" | "success" | "error";
 const ACCEPTED_MEDIA_TYPES = ["image/", "application/pdf"];
 const ACCEPTABLE_GEOLOCATION_ACCURACY_METERS = 500;
 const GEOLOCATION_DETECTION_WINDOW_MS = 12000;
+
+type DonationPayload = Pick<
+  CreateRequestInput,
+  | "target_amount"
+  | "payment_type"
+  | "bank_account_name"
+  | "bank_account_number"
+  | "bank_name"
+  | "receiving_mobile_provider"
+  | "receiving_mobile_number"
+>;
 
 const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) => {
   const isEdit = !!editRequest;
@@ -284,17 +295,53 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
       return;
     }
 
-    // Validate payment fields when a payment type is chosen
-    if (paymentType === "bank") {
-      if (!bankAccountName.trim() || !bankAccountNumber.trim() || !bankName.trim()) {
-        showToast("Please fill in all bank account details.", "error");
+    const trimmedTargetAmount = targetAmount.trim();
+    const hasDonationConfiguration = Boolean(trimmedTargetAmount || paymentType);
+    let donationPayload: DonationPayload = {};
+
+    if (hasDonationConfiguration) {
+      const parsedTargetAmount = Number(trimmedTargetAmount);
+
+      if (!trimmedTargetAmount || Number.isNaN(parsedTargetAmount) || parsedTargetAmount <= 0) {
+        showToast("Enter a target amount greater than 0 to receive donations.", "error");
         return;
       }
-    }
-    if (paymentType === "mobile_money") {
-      if (!receivingMobileNumber.trim()) {
-        showToast("Please enter a mobile money number.", "error");
+
+      if (!paymentType) {
+        showToast("Select how you want to receive donations.", "error");
         return;
+      }
+
+      donationPayload = {
+        target_amount: parsedTargetAmount,
+        payment_type: paymentType,
+      };
+
+      if (paymentType === "bank") {
+        if (!bankAccountName.trim() || !bankAccountNumber.trim() || !bankName.trim()) {
+          showToast("Please fill in all bank account details.", "error");
+          return;
+        }
+
+        donationPayload = {
+          ...donationPayload,
+          bank_account_name: bankAccountName.trim(),
+          bank_account_number: bankAccountNumber.trim(),
+          bank_name: bankName.trim(),
+        };
+      }
+
+      if (paymentType === "mobile_money") {
+        if (!receivingMobileNumber.trim()) {
+          showToast("Please enter a mobile money number.", "error");
+          return;
+        }
+
+        donationPayload = {
+          ...donationPayload,
+          receiving_mobile_provider: receivingMobileProvider,
+          receiving_mobile_number: receivingMobileNumber.trim(),
+        };
       }
     }
 
@@ -318,6 +365,7 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
             location_name: trimmedLocationName,
             latitude: coordinates.latitude,
             longitude: coordinates.longitude,
+            ...donationPayload,
           },
         },
         { onSuccess: () => { onSuccess(); onClose(); } }
@@ -337,6 +385,7 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
           location_name: trimmedLocationName,
           ...(coordinates.latitude !== undefined && { latitude: coordinates.latitude }),
           ...(coordinates.longitude !== undefined && { longitude: coordinates.longitude }),
+          ...donationPayload,
         },
         timestamp: Date.now(),
       };
@@ -351,8 +400,6 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
       return;
     }
 
-    const parsedTargetAmount = targetAmount.trim() ? Number(targetAmount) : undefined;
-
     createRequestMutation.mutate({
       title: trimmedTitle,
       description: trimmedDescription,
@@ -361,17 +408,7 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
       latitude: coordinates.latitude,
       longitude: coordinates.longitude,
       media: files,
-      ...(parsedTargetAmount && parsedTargetAmount > 0 && { target_amount: parsedTargetAmount }),
-      ...(paymentType && { payment_type: paymentType }),
-      ...(paymentType === "bank" && {
-        bank_account_name: bankAccountName.trim(),
-        bank_account_number: bankAccountNumber.trim(),
-        bank_name: bankName.trim(),
-      }),
-      ...(paymentType === "mobile_money" && {
-        receiving_mobile_provider: receivingMobileProvider,
-        receiving_mobile_number: receivingMobileNumber.trim(),
-      }),
+      ...donationPayload,
     }, {
       onSuccess: () => { onSuccess(); onClose(); },
       onError: async (err) => {
@@ -388,6 +425,7 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
               location_name: trimmedLocationName,
               ...(coordinates.latitude !== undefined && { latitude: coordinates.latitude }),
               ...(coordinates.longitude !== undefined && { longitude: coordinates.longitude }),
+              ...donationPayload,
             },
             timestamp: Date.now(),
           };

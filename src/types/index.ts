@@ -116,6 +116,13 @@ export interface UpdateRequestInput {
   location_name?: string;
   latitude?: number;
   longitude?: number;
+  target_amount?: number;
+  payment_type?: "bank" | "mobile_money";
+  bank_account_name?: string;
+  bank_account_number?: string;
+  bank_name?: string;
+  receiving_mobile_provider?: "mtn_momo" | "airtel_money";
+  receiving_mobile_number?: string;
 }
 
 export interface CreateRequestInput {
