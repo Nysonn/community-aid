@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth as useClerkAuth } from "@clerk/clerk-react";
 import { useSelector } from "react-redux";
@@ -6,7 +6,15 @@ import type { RootState } from "../../store";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { isSignedIn, signOut } = useClerkAuth();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 48);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.auth.user);
   const pendingCount = useSelector(
@@ -21,9 +29,9 @@ const Navbar = () => {
 
   const closeMenu = () => setMenuOpen(false);
 
-  // Desktop nav link — active page gets a blue pill
+  // Desktop nav link — scroll-aware colours
   const desktopLink = ({ isActive }: { isActive: boolean }) =>
-    `relative text-sm font-medium px-3.5 py-1.5 rounded-lg transition-all duration-200 ${
+    `relative text-sm font-medium px-3.5 py-1.5 rounded-lg transition-all duration-300 ${
       isActive
         ? "text-blue-600 bg-blue-50/80 font-semibold"
         : "text-slate-500 hover:text-slate-800 hover:bg-slate-100/70"
@@ -50,7 +58,16 @@ const Navbar = () => {
   return (
     <header className="sticky top-0 z-40">
       {/* ── Main bar ── */}
-      <nav className="bg-white/80 backdrop-blur-xl border-b border-slate-200/60 shadow-[0_1px_0_0_rgba(0,0,0,0.04),0_4px_16px_-4px_rgba(0,0,0,0.06)]">
+      <nav
+        className="backdrop-blur-xl transition-all duration-500"
+        style={{
+          background: "rgba(255,255,255,0.92)",
+          borderBottom: "1px solid rgba(226,232,240,0.6)",
+          boxShadow: scrolled
+            ? "0 1px 0 0 rgba(0,0,0,0.04), 0 4px 16px -4px rgba(0,0,0,0.06)"
+            : "none",
+        }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-[64px] gap-6">
 
@@ -66,7 +83,7 @@ const Navbar = () => {
                 className="h-9 w-9 object-contain drop-shadow-sm transition-transform duration-200 group-hover:scale-105"
               />
               <span className="select-none" style={{ display: "flex", alignItems: "baseline", gap: "4px" }}>
-                <span style={{ fontFamily: "system-ui, sans-serif", fontWeight: 500, fontSize: "20px", letterSpacing: "-0.5px" }}>Community</span>
+                <span style={{ fontFamily: "system-ui, sans-serif", fontWeight: 500, fontSize: "20px", letterSpacing: "-0.5px", color: "inherit" }}>Community</span>
                 <span style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontWeight: 700, fontSize: "22px", letterSpacing: "-0.5px", color: "#185FA5" }}>Aid</span>
                 <span aria-hidden="true" style={{ width: "6px", height: "6px", borderRadius: "999px", background: "#185FA5", alignSelf: "flex-start", marginTop: "6px", marginLeft: "1px", flexShrink: 0 }} />
               </span>
@@ -100,11 +117,14 @@ const Navbar = () => {
                   )}
 
                   {/* Thin separator */}
-                  <div className="w-px h-5 bg-slate-200 mx-1" />
+                  <div className="w-px h-5 mx-1" style={{ background: "rgb(226,232,240)" }} />
 
                   <button
                     onClick={handleSignOut}
-                    className="flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-50/70 transition-all duration-150"
+                    className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg transition-all duration-300"
+                    style={{ color: "rgb(100,116,139)" }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = "rgb(220,38,38)"; (e.currentTarget as HTMLButtonElement).style.background = "rgba(254,242,242,0.7)"; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = "rgb(100,116,139)"; (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
                   >
                     <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -124,7 +144,8 @@ const Navbar = () => {
                 <>
                   <Link
                     to="/login"
-                    className="text-sm font-medium text-slate-600 hover:text-slate-900 px-3.5 py-1.5 rounded-lg hover:bg-slate-100/70 transition-all duration-150"
+                    className="text-sm font-medium px-3.5 py-1.5 rounded-lg transition-all duration-300"
+                    style={{ color: "rgb(71,85,105)" }}
                   >
                     Log in
                   </Link>
@@ -149,20 +170,23 @@ const Navbar = () => {
                 </div>
               )}
               <button
-                className="flex items-center justify-center h-8 w-8 rounded-lg border border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 transition-all duration-150 shadow-sm"
+                className="flex items-center justify-center h-8 w-8 rounded-lg transition-all duration-300"
+                style={{
+                  border: "1px solid rgb(226,232,240)",
+                  background: "white",
+                  boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+                }}
                 onClick={() => setMenuOpen((prev) => !prev)}
                 aria-label="Toggle menu"
                 aria-expanded={menuOpen}
               >
                 <span className="sr-only">{menuOpen ? "Close menu" : "Open menu"}</span>
                 {menuOpen ? (
-                  /* Close — refined × */
-                  <svg className="h-3.5 w-3.5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-3.5 w-3.5" style={{ color: "rgb(71,85,105)" }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 ) : (
-                  /* Open — three lines, middle shorter for premium feel */
-                  <svg className="h-3.5 w-3.5 text-slate-600" fill="none" viewBox="0 0 16 12" stroke="currentColor">
+                  <svg className="h-3.5 w-3.5" style={{ color: "rgb(71,85,105)" }} fill="none" viewBox="0 0 16 12" stroke="currentColor">
                     <line x1="0" y1="1"  x2="16" y2="1"  strokeWidth="1.75" strokeLinecap="round" />
                     <line x1="2" y1="6"  x2="14" y2="6"  strokeWidth="1.75" strokeLinecap="round" />
                     <line x1="0" y1="11" x2="16" y2="11" strokeWidth="1.75" strokeLinecap="round" />
@@ -175,7 +199,7 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* ── Gradient accent line below nav ── */}
+      {/* ── Gradient accent line below nav (only when opaque) ── */}
       <div className="h-px bg-gradient-to-r from-transparent via-blue-400/30 to-transparent" />
 
       {/* ── Mobile dropdown ── */}

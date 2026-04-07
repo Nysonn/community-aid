@@ -82,47 +82,121 @@ const HomePage = () => {
   return (
     <div>
       {/* ── Hero ───────────────────────────────────────────────────────────── */}
-      <section className="bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-10 sm:py-16 lg:py-20">
+      <section
+        className="relative flex items-center overflow-hidden"
+        style={{ minHeight: "clamp(560px, 90vh, 860px)" }}
+      >
+        {/* Background image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage:
+              "url('https://res.cloudinary.com/df3lhzzy7/image/upload/v1775554557/pexels-rdne-6647115_lxnhbv.jpg')",
+          }}
+          aria-hidden="true"
+        />
+
+        {/* Layered overlay — deep navy tint so text pops */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(160deg, rgba(10,22,50,0.82) 0%, rgba(15,40,80,0.72) 50%, rgba(10,22,50,0.88) 100%)",
+          }}
+          aria-hidden="true"
+        />
+
+        {/* Bottom wave divider */}
+        <div
+          className="absolute bottom-0 left-0 right-0 pointer-events-none overflow-hidden"
+          style={{ height: "88px" }}
+          aria-hidden="true"
+        >
+          <svg
+            viewBox="0 0 1440 88"
+            preserveAspectRatio="none"
+            style={{ width: "100%", height: "100%", display: "block" }}
+          >
+            <path
+              d="M0,44 C360,88 1080,0 1440,44 L1440,88 L0,88 Z"
+              fill="rgba(248,249,251,0.4)"
+            />
+            <path
+              d="M0,60 C480,88 960,36 1440,60 L1440,88 L0,88 Z"
+              fill="#F8F9FB"
+            />
+          </svg>
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-28">
           <div className="flex flex-col items-center text-center">
 
             {/* 1. Live badge pill */}
             <div
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full mb-4 sm:mb-5"
-              style={{ background: "#EFF6FF", border: "1px solid #bfdbfe" }}
+              className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full mb-6 sm:mb-7"
+              style={{
+                background: "rgba(255,255,255,0.12)",
+                border: "1px solid rgba(255,255,255,0.28)",
+                backdropFilter: "blur(8px)",
+              }}
             >
+              {/* Pulsing green dot */}
+              <span className="relative flex h-2 w-2 shrink-0">
+                <span
+                  className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+                  style={{ background: "#4ade80" }}
+                />
+                <span
+                  className="relative inline-flex rounded-full h-2 w-2"
+                  style={{ background: "#22c55e" }}
+                />
+              </span>
               <span
-                aria-hidden="true"
-                style={{ width: "6px", height: "6px", borderRadius: "999px", background: "#22c55e", flexShrink: 0 }}
-              />
-              <span style={{ fontSize: "11px", fontWeight: 600, color: "#185FA5", letterSpacing: "0.01em" }}>
+                style={{
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  color: "rgba(255,255,255,0.92)",
+                  letterSpacing: "0.04em",
+                  textTransform: "uppercase",
+                }}
+              >
                 Live Emergency Response Platform
               </span>
             </div>
 
             {/* 2. Headline */}
             <h1
-              className="font-extrabold text-center mb-3 sm:mb-4 w-full"
+              className="font-extrabold text-center mb-4 sm:mb-5 w-full"
               style={{
-                fontSize: "clamp(30px, 5vw, 56px)",
+                fontSize: "clamp(32px, 5.5vw, 64px)",
                 letterSpacing: "-1.5px",
-                lineHeight: 1.12,
-                color: "#0f172a",
-                maxWidth: "820px",
+                lineHeight: 1.1,
+                color: "#ffffff",
+                maxWidth: "860px",
+                textShadow: "0 2px 20px rgba(0,0,0,0.3)",
               }}
             >
               Emergency Response for{" "}
-              <span style={{ color: "#185FA5" }}>Ugandan</span>{" "}
+              <span
+                style={{
+                  color: "#60a5fa",
+                  position: "relative",
+                  display: "inline-block",
+                }}
+              >
+                Ugandan
+              </span>{" "}
               Communities
             </h1>
 
             {/* 3. Subtext */}
             <p
-              className="text-center mb-6 sm:mb-7 max-w-[340px] sm:max-w-[440px]"
+              className="text-center mb-8 sm:mb-10 max-w-[360px] sm:max-w-[480px]"
               style={{
-                fontSize: "14px",
-                color: "#64748b",
-                lineHeight: 1.65,
+                fontSize: "15px",
+                color: "rgba(255,255,255,0.75)",
+                lineHeight: 1.7,
               }}
             >
               Connecting people in need with volunteers, donors, and responders
@@ -130,40 +204,49 @@ const HomePage = () => {
             </p>
 
             {/* 4. CTA buttons */}
-            <div className="flex flex-row flex-wrap justify-center gap-2.5 mb-3">
+            <div className="flex flex-row flex-wrap justify-center gap-3 mb-10 sm:mb-12">
               <a
                 href="#requests"
-                className="inline-flex items-center justify-center transition-opacity duration-150 hover:opacity-85 active:scale-95"
+                className="inline-flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.03] active:scale-95 shadow-lg"
                 style={{
                   background: "#185FA5",
                   color: "#ffffff",
-                  fontWeight: 600,
+                  fontWeight: 700,
                   fontSize: "14px",
-                  padding: "11px 26px",
+                  padding: "13px 30px",
                   borderRadius: "999px",
                   textDecoration: "none",
                   whiteSpace: "nowrap",
+                  boxShadow: "0 4px 20px rgba(24,95,165,0.5)",
                 }}
               >
+                <svg style={{ width: "16px", height: "16px" }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
                 View Requests
               </a>
 
               {isCommunityMember && (
                 <button
                   onClick={() => setShowModal(true)}
-                  className="inline-flex items-center justify-center transition-colors duration-150 hover:bg-slate-50 active:scale-95"
+                  className="inline-flex items-center justify-center gap-2 transition-all duration-200 hover:bg-white/20 active:scale-95"
                   style={{
-                    background: "#ffffff",
-                    color: "#0f172a",
-                    fontWeight: 600,
+                    background: "rgba(255,255,255,0.1)",
+                    color: "#ffffff",
+                    fontWeight: 700,
                     fontSize: "14px",
-                    padding: "11px 26px",
+                    padding: "13px 30px",
                     borderRadius: "999px",
-                    border: "1px solid #cbd5e1",
+                    border: "1.5px solid rgba(255,255,255,0.4)",
                     cursor: "pointer",
                     whiteSpace: "nowrap",
+                    backdropFilter: "blur(8px)",
                   }}
                 >
+                  <svg style={{ width: "16px", height: "16px" }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                  </svg>
                   Post a Request
                 </button>
               )}
@@ -171,35 +254,34 @@ const HomePage = () => {
               {!isSignedIn && (
                 <Link
                   to="/register"
-                  className="inline-flex items-center justify-center transition-colors duration-150 hover:bg-slate-50 active:scale-95"
+                  className="inline-flex items-center justify-center gap-2 transition-all duration-200 hover:bg-white/20 active:scale-95"
                   style={{
-                    background: "#ffffff",
-                    color: "#0f172a",
-                    fontWeight: 600,
+                    background: "rgba(255,255,255,0.1)",
+                    color: "#ffffff",
+                    fontWeight: 700,
                     fontSize: "14px",
-                    padding: "11px 26px",
+                    padding: "13px 30px",
                     borderRadius: "999px",
-                    border: "1px solid #cbd5e1",
+                    border: "1.5px solid rgba(255,255,255,0.4)",
                     textDecoration: "none",
                     whiteSpace: "nowrap",
+                    backdropFilter: "blur(8px)",
                   }}
                 >
+                  <svg style={{ width: "16px", height: "16px" }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                  </svg>
                   Join Community
                 </Link>
               )}
             </div>
-
-            {/* 5. Note text */}
-            <p style={{ fontSize: "11px", color: "#94a3b8" }}>
-              No account needed to browse requests
-            </p>
 
           </div>
         </div>
       </section>
 
       {/* ── Requests ───────────────────────────────────────────────────────── */}
-      <section id="requests" className="bg-white border-t border-gray-100">
+      <section id="requests" className="bg-[#F8F9FB]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
 
           {/* ── Section header ── */}
