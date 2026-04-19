@@ -12,9 +12,10 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   request: EmergencyRequest;
+  initialOfferType?: Offer["offer_type"];
 }
 
-const OfferHelpModal = ({ isOpen, onClose, request }: Props) => {
+const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) => {
   const dispatch = useDispatch<AppDispatch>();
   const { showToast } = useGlobalToast();
   const createOfferMutation = useCreateOffer();
@@ -23,11 +24,15 @@ const OfferHelpModal = ({ isOpen, onClose, request }: Props) => {
     ? ["transport", "donation", "expertise"]
     : ["transport", "expertise"];
 
+  const resolvedInitial: Offer["offer_type"] = (() => {
+    if (initialOfferType === "donation" && canReceiveDonations) return "donation";
+    if (initialOfferType && availableOfferTypes.includes(initialOfferType)) return initialOfferType;
+    return canReceiveDonations ? "donation" : "transport";
+  })();
+
   const [responderName, setResponderName] = useState("");
   const [responderContact, setResponderContact] = useState("");
-  const [offerType, setOfferType] = useState<Offer["offer_type"]>(
-    canReceiveDonations ? "donation" : "transport"
-  );
+  const [offerType, setOfferType] = useState<Offer["offer_type"]>(resolvedInitial);
   // Expertise
   const [expertiseDetails, setExpertiseDetails] = useState("");
   // Transport
@@ -54,7 +59,7 @@ const OfferHelpModal = ({ isOpen, onClose, request }: Props) => {
   const resetForm = () => {
     setResponderName("");
     setResponderContact("");
-    setOfferType(canReceiveDonations ? "donation" : "transport");
+    setOfferType(resolvedInitial);
     setExpertiseDetails("");
     setVehicleType("");
     setDonationAmount("");
