@@ -837,306 +837,232 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* ── Aid Categories ──────────────────────────────────────────────────── */}
+      {/* ── What We Cover ───────────────────────────────────────────────────── */}
       <section
         id="aid-types"
         className="relative py-20 lg:py-28 overflow-hidden"
-        style={{ background: "#F8F9FB" }}
+        style={{ background: "linear-gradient(160deg, #f0f6ff 0%, #f8f9fb 55%, #eef4ff 100%)" }}
       >
         {/* Dot-grid texture */}
         <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: "radial-gradient(circle, rgba(148,163,184,0.14) 1px, transparent 1px)",
-            backgroundSize: "30px 30px",
-          }}
+          className="absolute inset-0 pointer-events-none opacity-[0.45]"
+          style={{ backgroundImage: "radial-gradient(rgba(148,163,184,0.18) 1px, transparent 1px)", backgroundSize: "28px 28px" }}
           aria-hidden="true"
         />
-        {/* Top radial glow */}
+        {/* Top glow */}
         <div
           className="absolute pointer-events-none"
-          style={{
-            top: "-160px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "900px",
-            height: "420px",
-            borderRadius: "50%",
-            background: "radial-gradient(ellipse, rgba(219,234,254,0.55) 0%, transparent 68%)",
-          }}
+          style={{ top: "-100px", left: "50%", transform: "translateX(-50%)", width: "700px", height: "260px", borderRadius: "50%", background: "radial-gradient(ellipse, rgba(219,234,254,0.8) 0%, transparent 68%)", filter: "blur(50px)" }}
           aria-hidden="true"
         />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-          {/* ── Section header ── */}
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <div
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full mb-5"
-              style={{ background: "#EFF6FF", border: "1px solid #BFDBFE" }}
-            >
-              <svg className="h-3.5 w-3.5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-              </svg>
-              <span className="text-[11px] font-bold text-blue-600 uppercase tracking-widest">
-                What We Cover
-              </span>
+          {/* ── Header ── */}
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-14">
+            <div className="max-w-xl">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full mb-5" style={{ background: "#EFF6FF", border: "1px solid #BFDBFE" }}>
+                <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse inline-block" />
+                <span className="text-[11px] font-bold text-blue-600 uppercase tracking-widest">What We Cover</span>
+              </div>
+              <h2
+                className="font-extrabold tracking-tight leading-tight text-slate-900"
+                style={{ fontSize: "clamp(26px, 3.8vw, 44px)" }}
+              >
+                Four pillars of{" "}
+                <span style={{ color: "#185FA5" }}>emergency response</span>
+              </h2>
             </div>
-
-            <h2
-              className="font-extrabold text-slate-900 tracking-tight leading-tight mb-4"
-              style={{ fontSize: "clamp(26px, 3.8vw, 42px)" }}
-            >
-              Four types of{" "}
-              <span style={{ color: "#185FA5" }}>emergency aid</span>
-            </h2>
-            <p className="text-slate-500 leading-relaxed" style={{ fontSize: "clamp(14px, 1.4vw, 16px)" }}>
-              Every request is categorised so the right helpers find it
-              instantly and can respond with speed and confidence.
+            <p className="text-base leading-relaxed text-slate-500 lg:max-w-xs lg:text-right">
+              Every request is categorised so the right helpers respond with speed and confidence.
             </p>
           </div>
 
-          {/* ── Category cards — 2×2 grid ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {[
-              {
-                label: "Medical",
-                urgencyLabel: "Critical",
-                shortDesc: "Healthcare & clinical support",
-                description:
-                  "Covers urgent healthcare needs including medications, hospital transport, first aid, and critical care for community members who cannot afford or access care alone.",
-                headerGradient: "linear-gradient(135deg, #185FA5 0%, #1e3a8a 100%)",
-                accentColor: "#185FA5",
-                borderColor: "#BFDBFE",
-                tagBg: "#EFF6FF",
-                tagColor: "#1d4ed8",
-                tagBorder: "#BFDBFE",
-                tags: ["Hospital Transport", "Medication", "First Aid", "Critical Care"],
-                watermarkIcon: (
-                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ width: "100%", height: "100%" }}>
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={0.8} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                ),
-                icon: (
-                  <svg className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                ),
-              },
-              {
-                label: "Food",
-                urgencyLabel: "Urgent",
-                shortDesc: "Nutrition & food insecurity",
-                description:
-                  "Addresses acute food insecurity — emergency meals, dry food supplies, and targeted feeding programmes for families, children, and the elderly in crisis situations.",
-                headerGradient: "linear-gradient(135deg, #D97706 0%, #92400e 100%)",
-                accentColor: "#D97706",
-                borderColor: "#FDE68A",
-                tagBg: "#FFFBEB",
-                tagColor: "#92400e",
-                tagBorder: "#FDE68A",
-                tags: ["Emergency Meals", "Food Supplies", "Nutrition", "Feeding Programs"],
-                watermarkIcon: (
-                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ width: "100%", height: "100%" }}>
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={0.8} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                ),
-                icon: (
-                  <svg className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                ),
-              },
-              {
-                label: "Rescue",
-                urgencyLabel: "Emergency",
-                shortDesc: "Life-threatening situations",
-                description:
-                  "For life-threatening events requiring immediate on-the-ground response — flooding, road accidents, fire incidents, or sudden displacement from homes.",
-                headerGradient: "linear-gradient(135deg, #DC2626 0%, #991b1b 100%)",
-                accentColor: "#DC2626",
-                borderColor: "#FECACA",
-                tagBg: "#FEF2F2",
-                tagColor: "#991b1b",
-                tagBorder: "#FECACA",
-                tags: ["Flooding", "Accidents", "Fire Response", "Displacement"],
-                watermarkIcon: (
-                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ width: "100%", height: "100%" }}>
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={0.8} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                  </svg>
-                ),
-                icon: (
-                  <svg className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                  </svg>
-                ),
-              },
-              {
-                label: "Shelter",
-                urgencyLabel: "Priority",
-                shortDesc: "Housing & accommodation",
-                description:
-                  "Supports safe and dignified housing — temporary accommodation, structural repairs, roofing assistance, and construction support for families displaced or in need.",
-                headerGradient: "linear-gradient(135deg, #059669 0%, #065f46 100%)",
-                accentColor: "#059669",
-                borderColor: "#A7F3D0",
-                tagBg: "#ECFDF5",
-                tagColor: "#065f46",
-                tagBorder: "#A7F3D0",
-                tags: ["Accommodation", "Construction", "Roofing", "Displaced Families"],
-                watermarkIcon: (
-                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ width: "100%", height: "100%" }}>
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={0.8} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                  </svg>
-                ),
-                icon: (
-                  <svg className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                  </svg>
-                ),
-              },
-            ].map((cat) => (
+          {/* ── Cards — asymmetric bento grid ── */}
+          {/*  lg: [Medical wide] [Rescue narrow]  */}
+          {/*      [Food narrow]  [Shelter wide]   */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {(
+              [
+                {
+                  label: "Medical",
+                  urgencyLabel: "Critical",
+                  shortDesc: "Healthcare & clinical support",
+                  description: "Urgent healthcare — medications, hospital transport, first aid, and critical care for those who cannot afford or access it alone.",
+                  color: "#185FA5",
+                  tagBg: "#EFF6FF",
+                  tagColor: "#1d4ed8",
+                  tagBorder: "#BFDBFE",
+                  glowBg: "#EFF6FF",
+                  glowBorder: "#BFDBFE",
+                  shadow: "rgba(24,95,165,0.12)",
+                  tags: ["Hospital Transport", "Medication", "First Aid", "Critical Care"],
+                  span: "lg:col-span-2",
+                  iconPath: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z",
+                  stat: "43%",
+                  statLabel: "of all requests",
+                },
+                {
+                  label: "Rescue",
+                  urgencyLabel: "Emergency",
+                  shortDesc: "Life-threatening situations",
+                  description: "Immediate response to floods, accidents, fires, and sudden displacement.",
+                  color: "#DC2626",
+                  tagBg: "#FEF2F2",
+                  tagColor: "#991b1b",
+                  tagBorder: "#FECACA",
+                  glowBg: "#FEF2F2",
+                  glowBorder: "#FECACA",
+                  shadow: "rgba(220,38,38,0.10)",
+                  tags: ["Flooding", "Accidents", "Fire Response", "Displacement"],
+                  span: "lg:col-span-1",
+                  iconPath: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z",
+                  stat: "28%",
+                  statLabel: "of all requests",
+                },
+                {
+                  label: "Food",
+                  urgencyLabel: "Urgent",
+                  shortDesc: "Nutrition & food insecurity",
+                  description: "Emergency meals, dry food supplies, and feeding programmes for families in crisis.",
+                  color: "#D97706",
+                  tagBg: "#FFFBEB",
+                  tagColor: "#92400e",
+                  tagBorder: "#FDE68A",
+                  glowBg: "#FFFBEB",
+                  glowBorder: "#FDE68A",
+                  shadow: "rgba(217,119,6,0.10)",
+                  tags: ["Emergency Meals", "Food Supplies", "Nutrition", "Feeding Programs"],
+                  span: "lg:col-span-1",
+                  iconPath: "M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z",
+                  stat: "19%",
+                  statLabel: "of all requests",
+                },
+                {
+                  label: "Shelter",
+                  urgencyLabel: "Priority",
+                  shortDesc: "Housing & accommodation",
+                  description: "Temporary accommodation, structural repairs, roofing assistance, and construction support for displaced families.",
+                  color: "#059669",
+                  tagBg: "#ECFDF5",
+                  tagColor: "#065f46",
+                  tagBorder: "#A7F3D0",
+                  glowBg: "#ECFDF5",
+                  glowBorder: "#A7F3D0",
+                  shadow: "rgba(5,150,105,0.10)",
+                  tags: ["Accommodation", "Construction", "Roofing", "Displaced Families"],
+                  span: "lg:col-span-2",
+                  iconPath: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
+                  stat: "10%",
+                  statLabel: "of all requests",
+                },
+              ] as Array<{
+                label: string; urgencyLabel: string; shortDesc: string; description: string;
+                color: string; tagBg: string; tagColor: string; tagBorder: string;
+                glowBg: string; glowBorder: string; shadow: string;
+                tags: string[]; span: string; iconPath: string; stat: string; statLabel: string;
+              }>
+            ).map((cat) => (
               <div
                 key={cat.label}
-                className="group bg-white rounded-3xl overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+                className={`group relative bg-white flex flex-col gap-5 rounded-3xl p-7 overflow-hidden transition-all duration-300 hover:-translate-y-1 ${cat.span}`}
                 style={{
-                  border: `1px solid ${cat.borderColor}`,
-                  boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+                  border: `1px solid ${cat.glowBorder}`,
+                  boxShadow: "0 2px 12px rgba(15,23,42,0.06)",
                 }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.boxShadow = `0 8px 32px ${cat.shadow}`; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 2px 12px rgba(15,23,42,0.06)"; }}
               >
-                {/* ── Coloured header band ── */}
-                <div
-                  className="relative flex items-center gap-5 px-7 py-6 overflow-hidden"
-                  style={{ background: cat.headerGradient, minHeight: "100px" }}
+                {/* Watermark icon */}
+                <svg
+                  className="absolute -bottom-6 -right-6 pointer-events-none"
+                  style={{ width: "140px", height: "140px", color: cat.color, opacity: 0.07 }}
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}
+                  aria-hidden="true"
                 >
-                  {/* Watermark icon — far right */}
+                  <path strokeLinecap="round" strokeLinejoin="round" d={cat.iconPath} />
+                </svg>
+
+                {/* Top row: icon + badge */}
+                <div className="flex items-start justify-between gap-3">
                   <div
-                    className="absolute -right-4 -top-4 bottom-0 flex items-center pointer-events-none"
-                    style={{ width: "130px", color: "white", opacity: 0.1 }}
-                    aria-hidden="true"
+                    className="h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110"
+                    style={{ background: cat.glowBg, border: `1px solid ${cat.glowBorder}` }}
                   >
-                    {cat.watermarkIcon}
+                    <svg className="h-5 w-5" style={{ color: cat.color }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d={cat.iconPath} />
+                    </svg>
                   </div>
-
-                  {/* Top shimmer */}
-                  <div
-                    className="absolute top-0 left-0 right-0 h-px"
-                    style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)" }}
-                    aria-hidden="true"
-                  />
-
-                  {/* Icon tile */}
-                  <div
-                    className="h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110"
-                    style={{
-                      background: "rgba(255,255,255,0.18)",
-                      backdropFilter: "blur(8px)",
-                      border: "1px solid rgba(255,255,255,0.28)",
-                    }}
+                  <span
+                    className="text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full shrink-0"
+                    style={{ background: cat.glowBg, color: cat.color, border: `1px solid ${cat.glowBorder}` }}
                   >
-                    {cat.icon}
-                  </div>
-
-                  {/* Label + urgency badge */}
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2.5 mb-1 flex-wrap">
-                      <h3
-                        className="font-extrabold text-white leading-tight"
-                        style={{ fontSize: "clamp(17px, 2vw, 21px)", letterSpacing: "-0.3px" }}
-                      >
-                        {cat.label}
-                      </h3>
-                      <span
-                        className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full shrink-0"
-                        style={{
-                          background: "rgba(255,255,255,0.2)",
-                          color: "rgba(255,255,255,0.92)",
-                          border: "1px solid rgba(255,255,255,0.28)",
-                          backdropFilter: "blur(6px)",
-                        }}
-                      >
-                        {cat.urgencyLabel}
-                      </span>
-                    </div>
-                    <p className="text-[12.5px] font-medium truncate" style={{ color: "rgba(255,255,255,0.72)" }}>
-                      {cat.shortDesc}
-                    </p>
-                  </div>
+                    {cat.urgencyLabel}
+                  </span>
                 </div>
 
-                {/* ── Card body ── */}
-                <div className="p-7 flex flex-col gap-5 flex-1">
-
-                  {/* Description */}
-                  <p className="text-[14px] text-slate-600 leading-relaxed">
-                    {cat.description}
+                {/* Label + short desc */}
+                <div>
+                  <h3 className="font-extrabold text-slate-900 leading-tight mb-1" style={{ fontSize: "clamp(18px, 1.8vw, 22px)" }}>
+                    {cat.label}
+                  </h3>
+                  <p className="text-[12.5px] font-medium" style={{ color: cat.color }}>
+                    {cat.shortDesc}
                   </p>
+                </div>
 
-                  {/* Sub-category tags */}
+                {/* Description */}
+                <p className="text-slate-500 text-[13.5px] leading-relaxed flex-1">
+                  {cat.description}
+                </p>
+
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2">
+                  {cat.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-[11px] font-semibold px-2.5 py-1 rounded-full"
+                      style={{ background: cat.tagBg, color: cat.tagColor, border: `1px solid ${cat.tagBorder}` }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Footer: stat + CTA */}
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                   <div>
-                    <p
-                      className="text-[10.5px] font-bold uppercase tracking-widest mb-2.5"
-                      style={{ color: cat.accentColor, opacity: 0.7 }}
-                    >
-                      Includes
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {cat.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="text-[12px] font-semibold px-3 py-1 rounded-full"
-                          style={{
-                            background: cat.tagBg,
-                            color: cat.tagColor,
-                            border: `1px solid ${cat.tagBorder}`,
-                          }}
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
+                    <span className="font-extrabold text-lg leading-none" style={{ color: cat.color }}>{cat.stat}</span>
+                    <span className="text-[11px] ml-1.5 text-slate-400">{cat.statLabel}</span>
                   </div>
-
-                  {/* CTA */}
-                  <div className="mt-auto pt-5 border-t border-gray-100">
-                    <a
-                      href="#requests"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        document.getElementById("requests")?.scrollIntoView({ behavior: "smooth" });
-                      }}
-                      className="inline-flex items-center gap-2 text-[13px] font-bold transition-all duration-200 group-hover:gap-3"
-                      style={{ color: cat.accentColor }}
-                    >
-                      <span>See {cat.label} requests</span>
-                      <svg
-                        className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:translate-x-1"
-                        fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </a>
-                  </div>
-
+                  <a
+                    href="#requests"
+                    onClick={(e) => { e.preventDefault(); document.getElementById("requests")?.scrollIntoView({ behavior: "smooth" }); }}
+                    className="inline-flex items-center gap-1.5 text-[12.5px] font-bold transition-all duration-200 group-hover:gap-2.5"
+                    style={{ color: cat.color }}
+                  >
+                    See requests
+                    <svg className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </a>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* ── Bottom info strip ── */}
-          <div className="mt-12 flex justify-center">
+          {/* ── Bottom hint ── */}
+          <div className="mt-10 flex justify-center">
             <div
-              className="inline-flex items-center gap-3 px-5 py-3.5 rounded-2xl"
+              className="inline-flex items-center gap-3 px-5 py-3 rounded-2xl"
               style={{ background: "#EFF6FF", border: "1px solid #BFDBFE" }}
             >
-              <div className="h-7 w-7 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                <svg className="h-3.5 w-3.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <span className="text-[13px] text-blue-800 font-medium">
+              <svg className="h-4 w-4 shrink-0 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="text-[13px] font-medium text-blue-700">
                 Not sure which category fits?{" "}
-                <span className="font-bold">Post your request</span> and our admin team will help classify it.
+                <span className="font-bold text-blue-900">Post your request</span> — our admin team will classify it for you.
               </span>
             </div>
           </div>
@@ -1322,14 +1248,14 @@ const HomePage = () => {
       <section
         id="get-involved"
         className="relative py-20 lg:py-28 overflow-hidden"
-        style={{ background: "linear-gradient(160deg, #060d1f 0%, #0a1c44 55%, #060d1f 100%)" }}
+        style={{ background: "linear-gradient(160deg, #f8faff 0%, #f0f6ff 55%, #f5f8ff 100%)" }}
       >
-        {/* Diagonal stripe texture */}
+        {/* Dot-grid texture */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage:
-              "repeating-linear-gradient(-45deg, transparent, transparent 40px, rgba(255,255,255,0.012) 40px, rgba(255,255,255,0.012) 41px)",
+            backgroundImage: "radial-gradient(rgba(148,163,184,0.15) 1px, transparent 1px)",
+            backgroundSize: "26px 26px",
           }}
           aria-hidden="true"
         />
@@ -1343,7 +1269,7 @@ const HomePage = () => {
             width: "550px",
             height: "550px",
             borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(24,95,165,0.28) 0%, transparent 68%)",
+            background: "radial-gradient(circle, rgba(219,234,254,0.7) 0%, transparent 68%)",
             filter: "blur(70px)",
           }}
           aria-hidden="true"
@@ -1358,7 +1284,7 @@ const HomePage = () => {
             width: "420px",
             height: "420px",
             borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(5,150,105,0.20) 0%, transparent 68%)",
+            background: "radial-gradient(circle, rgba(209,250,229,0.6) 0%, transparent 68%)",
             filter: "blur(70px)",
           }}
           aria-hidden="true"
@@ -1369,31 +1295,19 @@ const HomePage = () => {
           {/* ── Section header — left-aligned ── */}
           <div className="mb-14 max-w-xl">
             <div className="flex items-center gap-3 mb-5">
-              <div className="h-px w-12 shrink-0" style={{ background: "rgba(96,165,250,0.4)" }} />
-              <span
-                className="text-[11px] font-bold uppercase tracking-widest"
-                style={{ color: "#60a5fa" }}
-              >
+              <div className="h-px w-12 shrink-0 bg-blue-300" />
+              <span className="text-[11px] font-bold uppercase tracking-widest text-blue-600">
                 Take Action
               </span>
             </div>
             <h2
-              className="font-extrabold text-white leading-tight mb-4"
+              className="font-extrabold text-slate-900 leading-tight mb-4"
               style={{ fontSize: "clamp(26px, 3.8vw, 44px)", letterSpacing: "-0.5px" }}
             >
               How You Can{" "}
-              <span
-                style={{
-                  background: "linear-gradient(135deg, #60a5fa 0%, #34d399 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}
-              >
-                Make an Impact
-              </span>
+              <span style={{ color: "#185FA5" }}>Make an Impact</span>
             </h2>
-            <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "15px", lineHeight: 1.75 }}>
+            <p className="text-slate-500" style={{ fontSize: "15px", lineHeight: 1.75 }}>
               Whether you're facing a crisis, a skilled helper, or someone who wants to give — every action moves communities forward.
             </p>
           </div>
@@ -1403,27 +1317,19 @@ const HomePage = () => {
 
             {/* ── Card 1: Post a Request — tall featured card ── */}
             <div
-              className="group lg:col-span-2 relative rounded-3xl overflow-hidden flex flex-col transition-all duration-300 hover:shadow-[0_0_0_1px_rgba(96,165,250,0.35),0_24px_60px_rgba(0,0,0,0.45)]"
-              style={{
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(96,165,250,0.2)",
-              }}
+              className="group lg:col-span-2 relative bg-white rounded-3xl overflow-hidden flex flex-col transition-all duration-300 hover:shadow-[0_8px_40px_rgba(24,95,165,0.13)]"
+              style={{ border: "1px solid #BFDBFE" }}
             >
               {/* Blue gradient top accent */}
               <div
                 className="h-[3px] w-full shrink-0"
-                style={{ background: "linear-gradient(90deg, #185FA5, #60a5fa, #93c5fd)" }}
+                style={{ background: "linear-gradient(90deg, #185FA5, #3b82f6, #93c5fd)" }}
               />
 
               {/* Watermark step number */}
               <div
                 className="absolute top-3 right-4 font-black select-none pointer-events-none leading-none"
-                style={{
-                  fontSize: "108px",
-                  color: "rgba(96,165,250,0.055)",
-                  letterSpacing: "-6px",
-                  lineHeight: 1,
-                }}
+                style={{ fontSize: "108px", color: "rgba(24,95,165,0.05)", letterSpacing: "-6px", lineHeight: 1 }}
                 aria-hidden="true"
               >
                 01
@@ -1434,24 +1340,16 @@ const HomePage = () => {
                 {/* Audience chip */}
                 <div
                   className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full w-fit text-[11px] font-bold"
-                  style={{
-                    background: "rgba(96,165,250,0.10)",
-                    color: "#93c5fd",
-                    border: "1px solid rgba(96,165,250,0.22)",
-                  }}
+                  style={{ background: "#EFF6FF", color: "#1d4ed8", border: "1px solid #BFDBFE" }}
                 >
-                  <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
                   For Community Members
                 </div>
 
                 {/* Icon */}
                 <div
                   className="h-16 w-16 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
-                  style={{
-                    background: "rgba(96,165,250,0.10)",
-                    border: "1px solid rgba(96,165,250,0.22)",
-                    color: "#60a5fa",
-                  }}
+                  style={{ background: "#EFF6FF", border: "1px solid #BFDBFE", color: "#185FA5" }}
                 >
                   <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -1461,12 +1359,12 @@ const HomePage = () => {
                 {/* Content */}
                 <div>
                   <h3
-                    className="font-extrabold text-white mb-3 leading-tight"
+                    className="font-extrabold text-slate-900 mb-3 leading-tight"
                     style={{ fontSize: "clamp(20px, 2.2vw, 25px)", letterSpacing: "-0.4px" }}
                   >
                     Post a Request
                   </h3>
-                  <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px", lineHeight: 1.75 }}>
+                  <p className="text-slate-500" style={{ fontSize: "14px", lineHeight: 1.75 }}>
                     Facing an emergency? Describe your situation, pick a category, and share your location. Our verified network of volunteers, donors, and responders will mobilise — even without internet.
                   </p>
                 </div>
@@ -1478,14 +1376,10 @@ const HomePage = () => {
                     "Admin reviews every request before it goes live",
                     "Works offline so help still reaches you",
                   ].map((point) => (
-                    <li
-                      key={point}
-                      className="flex items-start gap-3 text-[13.5px]"
-                      style={{ color: "rgba(255,255,255,0.52)" }}
-                    >
+                    <li key={point} className="flex items-start gap-3 text-[13.5px] text-slate-600">
                       <span
                         className="h-5 w-5 rounded-full flex items-center justify-center shrink-0 mt-0.5"
-                        style={{ background: "rgba(96,165,250,0.14)", color: "#60a5fa" }}
+                        style={{ background: "#EFF6FF", color: "#185FA5" }}
                       >
                         <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -1554,37 +1448,23 @@ const HomePage = () => {
               <a
                 href="#requests"
                 onClick={(e) => { e.preventDefault(); document.getElementById("requests")?.scrollIntoView({ behavior: "smooth" }); }}
-                className="group relative rounded-3xl overflow-hidden flex flex-col sm:flex-row flex-1 transition-all duration-300 hover:shadow-[0_0_0_1px_rgba(74,222,128,0.35),0_16px_48px_rgba(0,0,0,0.40)] cursor-pointer"
-                style={{
-                  background: "rgba(255,255,255,0.04)",
-                  border: "1px solid rgba(74,222,128,0.2)",
-                  textDecoration: "none",
-                }}
+                className="group relative bg-white rounded-3xl overflow-hidden flex flex-col sm:flex-row flex-1 transition-all duration-300 hover:shadow-[0_8px_32px_rgba(5,150,105,0.12)] cursor-pointer"
+                style={{ border: "1px solid #A7F3D0", textDecoration: "none" }}
               >
-                {/* Gradient accent bar — top on mobile, left on sm+ */}
                 <div
                   className="h-[3px] sm:h-auto sm:w-[3px] w-full shrink-0 rounded-t-3xl sm:rounded-l-3xl sm:rounded-tr-none"
-                  style={{ background: "linear-gradient(180deg, #4ade80, #059669)" }}
+                  style={{ background: "linear-gradient(180deg, #34d399, #059669)" }}
                 />
-
-                {/* Watermark */}
                 <div
                   className="absolute top-3 right-5 font-black select-none pointer-events-none leading-none"
-                  style={{ fontSize: "80px", color: "rgba(74,222,128,0.06)", letterSpacing: "-4px", lineHeight: 1 }}
+                  style={{ fontSize: "80px", color: "rgba(5,150,105,0.05)", letterSpacing: "-4px", lineHeight: 1 }}
                   aria-hidden="true"
-                >
-                  02
-                </div>
+                >02</div>
 
-                {/* Icon panel */}
                 <div className="flex sm:flex-col items-center justify-center p-6 sm:p-7 sm:pr-4">
                   <div
                     className="h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110"
-                    style={{
-                      background: "rgba(74,222,128,0.10)",
-                      border: "1px solid rgba(74,222,128,0.22)",
-                      color: "#4ade80",
-                    }}
+                    style={{ background: "#ECFDF5", border: "1px solid #A7F3D0", color: "#059669" }}
                   >
                     <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -1592,33 +1472,28 @@ const HomePage = () => {
                   </div>
                 </div>
 
-                {/* Content */}
                 <div className="relative z-10 flex flex-col flex-1 gap-3 p-6 pt-0 sm:pt-6 sm:pl-2">
                   <div
                     className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full w-fit text-[10.5px] font-bold"
-                    style={{
-                      background: "rgba(74,222,128,0.10)",
-                      color: "#4ade80",
-                      border: "1px solid rgba(74,222,128,0.2)",
-                    }}
+                    style={{ background: "#ECFDF5", color: "#065f46", border: "1px solid #A7F3D0" }}
                   >
                     For Volunteers
                   </div>
                   <div>
                     <h3
-                      className="font-extrabold text-white mb-1.5 leading-tight"
+                      className="font-extrabold text-slate-900 mb-1.5 leading-tight"
                       style={{ fontSize: "clamp(17px, 1.8vw, 21px)", letterSpacing: "-0.3px" }}
                     >
                       Volunteer &amp; Offer Help
                     </h3>
-                    <p style={{ color: "rgba(255,255,255,0.48)", fontSize: "13.5px", lineHeight: 1.7 }}>
+                    <p className="text-slate-500" style={{ fontSize: "13.5px", lineHeight: 1.7 }}>
                       Browse active requests near you and offer transport, professional expertise, or on-the-ground assistance — no donation required.
                     </p>
                   </div>
-                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/[0.07]">
+                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
                     <span
                       className="inline-flex items-center gap-2 text-[12.5px] font-bold transition-all duration-200 group-hover:gap-3"
-                      style={{ color: "#4ade80" }}
+                      style={{ color: "#059669" }}
                     >
                       <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -1627,7 +1502,7 @@ const HomePage = () => {
                     </span>
                     <span
                       className="text-[11px] font-semibold px-3 py-1 rounded-full"
-                      style={{ background: "rgba(74,222,128,0.10)", color: "#4ade80", border: "1px solid rgba(74,222,128,0.18)" }}
+                      style={{ background: "#ECFDF5", color: "#065f46", border: "1px solid #A7F3D0" }}
                     >
                       340+ volunteers active
                     </span>
@@ -1639,37 +1514,23 @@ const HomePage = () => {
               <a
                 href="#requests"
                 onClick={(e) => { e.preventDefault(); document.getElementById("requests")?.scrollIntoView({ behavior: "smooth" }); }}
-                className="group relative rounded-3xl overflow-hidden flex flex-col sm:flex-row flex-1 transition-all duration-300 hover:shadow-[0_0_0_1px_rgba(249,168,212,0.35),0_16px_48px_rgba(0,0,0,0.40)] cursor-pointer"
-                style={{
-                  background: "rgba(255,255,255,0.04)",
-                  border: "1px solid rgba(249,168,212,0.2)",
-                  textDecoration: "none",
-                }}
+                className="group relative bg-white rounded-3xl overflow-hidden flex flex-col sm:flex-row flex-1 transition-all duration-300 hover:shadow-[0_8px_32px_rgba(24,95,165,0.12)] cursor-pointer"
+                style={{ border: "1px solid #BFDBFE", textDecoration: "none" }}
               >
-                {/* Gradient accent bar */}
                 <div
                   className="h-[3px] sm:h-auto sm:w-[3px] w-full shrink-0 rounded-t-3xl sm:rounded-l-3xl sm:rounded-tr-none"
-                  style={{ background: "linear-gradient(180deg, #f9a8d4, #ec4899)" }}
+                  style={{ background: "linear-gradient(180deg, #60a5fa, #185FA5)" }}
                 />
-
-                {/* Watermark */}
                 <div
                   className="absolute top-3 right-5 font-black select-none pointer-events-none leading-none"
-                  style={{ fontSize: "80px", color: "rgba(249,168,212,0.06)", letterSpacing: "-4px", lineHeight: 1 }}
+                  style={{ fontSize: "80px", color: "rgba(124,58,237,0.05)", letterSpacing: "-4px", lineHeight: 1 }}
                   aria-hidden="true"
-                >
-                  03
-                </div>
+                >03</div>
 
-                {/* Icon panel */}
                 <div className="flex sm:flex-col items-center justify-center p-6 sm:p-7 sm:pr-4">
                   <div
                     className="h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110"
-                    style={{
-                      background: "rgba(249,168,212,0.10)",
-                      border: "1px solid rgba(249,168,212,0.22)",
-                      color: "#f9a8d4",
-                    }}
+                    style={{ background: "#EFF6FF", border: "1px solid #BFDBFE", color: "#185FA5" }}
                   >
                     <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -1677,33 +1538,28 @@ const HomePage = () => {
                   </div>
                 </div>
 
-                {/* Content */}
                 <div className="relative z-10 flex flex-col flex-1 gap-3 p-6 pt-0 sm:pt-6 sm:pl-2">
                   <div
                     className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full w-fit text-[10.5px] font-bold"
-                    style={{
-                      background: "rgba(249,168,212,0.10)",
-                      color: "#f9a8d4",
-                      border: "1px solid rgba(249,168,212,0.2)",
-                    }}
+                    style={{ background: "#EFF6FF", color: "#1d4ed8", border: "1px solid #BFDBFE" }}
                   >
                     For Donors
                   </div>
                   <div>
                     <h3
-                      className="font-extrabold text-white mb-1.5 leading-tight"
+                      className="font-extrabold text-slate-900 mb-1.5 leading-tight"
                       style={{ fontSize: "clamp(17px, 1.8vw, 21px)", letterSpacing: "-0.3px" }}
                     >
                       Donate to a Cause
                     </h3>
-                    <p style={{ color: "rgba(255,255,255,0.48)", fontSize: "13.5px", lineHeight: 1.7 }}>
+                    <p className="text-slate-500" style={{ fontSize: "13.5px", lineHeight: 1.7 }}>
                       Give via mobile money or card. Your contribution reaches verified community members directly — tracked transparently until delivered.
                     </p>
                   </div>
-                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/[0.07]">
+                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
                     <span
                       className="inline-flex items-center gap-2 text-[12.5px] font-bold transition-all duration-200 group-hover:gap-3"
-                      style={{ color: "#f9a8d4" }}
+                      style={{ color: "#185FA5" }}
                     >
                       <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -1712,7 +1568,7 @@ const HomePage = () => {
                     </span>
                     <span
                       className="text-[11px] font-semibold px-3 py-1 rounded-full"
-                      style={{ background: "rgba(249,168,212,0.10)", color: "#f9a8d4", border: "1px solid rgba(249,168,212,0.18)" }}
+                      style={{ background: "#EFF6FF", color: "#1d4ed8", border: "1px solid #BFDBFE" }}
                     >
                       UGX 45M+ raised
                     </span>
@@ -1741,23 +1597,13 @@ const HomePage = () => {
             ].map((item) => (
               <div
                 key={item.text}
-                className="flex items-center gap-3 px-4 py-3 rounded-2xl"
-                style={{
-                  background: "rgba(255,255,255,0.035)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                }}
+                className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white"
+                style={{ border: "1px solid #e2e8f0", boxShadow: "0 1px 4px rgba(15,23,42,0.05)" }}
               >
-                <svg
-                  className="h-4 w-4 shrink-0 text-blue-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
+                <svg className="h-4 w-4 shrink-0 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
                 </svg>
-                <span className="text-[12.5px] leading-snug" style={{ color: "rgba(255,255,255,0.45)" }}>
-                  {item.text}
-                </span>
+                <span className="text-[12.5px] leading-snug text-slate-600">{item.text}</span>
               </div>
             ))}
           </div>
@@ -1765,88 +1611,281 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* ── Testimonials ────────────────────────────────────────────────────── */}
-      <section id="testimonials" className="bg-[#F8F9FB] py-16 lg:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-xl mx-auto mb-12">
-            <p className="text-xs font-semibold text-blue-600 uppercase tracking-widest mb-3 flex items-center justify-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-blue-500 inline-block" />
-              Community Stories
-            </p>
+      {/* ── Community Stories ───────────────────────────────────────────────── */}
+      <section id="testimonials" className="relative py-20 lg:py-28 overflow-hidden">
+        {/* Background */}
+        <div
+          className="absolute inset-0"
+          style={{ background: "linear-gradient(160deg, #f0f6ff 0%, #f8f9fb 50%, #eef4ff 100%)" }}
+          aria-hidden="true"
+        />
+        {/* Dot grid */}
+        <div
+          className="absolute inset-0 opacity-[0.035]"
+          style={{
+            backgroundImage: "radial-gradient(#185FA5 1px, transparent 1px)",
+            backgroundSize: "26px 26px",
+          }}
+          aria-hidden="true"
+        />
+        {/* Glow orbs */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            top: "-80px", left: "-80px", width: "360px", height: "360px",
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(24,95,165,0.12) 0%, transparent 70%)",
+            filter: "blur(50px)",
+          }}
+          aria-hidden="true"
+        />
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            bottom: "-60px", right: "-60px", width: "320px", height: "320px",
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(24,95,165,0.10) 0%, transparent 70%)",
+            filter: "blur(50px)",
+          }}
+          aria-hidden="true"
+        />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          {/* ── Section header ── */}
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-blue-100 shadow-sm mb-5">
+              <span className="h-2 w-2 rounded-full bg-blue-500 animate-pulse inline-block" />
+              <p className="text-xs font-semibold text-blue-600 uppercase tracking-widest">Community Stories</p>
+            </div>
             <h2
-              className="font-extrabold text-slate-900 tracking-tight leading-tight mb-3"
-              style={{ fontSize: "clamp(24px, 3.5vw, 38px)" }}
+              className="font-extrabold text-slate-900 tracking-tight leading-tight mb-4"
+              style={{ fontSize: "clamp(26px, 3.8vw, 42px)" }}
             >
-              Real Impact, Real People
+              Real Impact,{" "}
+              <span className="relative inline-block">
+                Real People
+                <svg
+                  className="absolute -bottom-1.5 left-0 w-full"
+                  height="7"
+                  viewBox="0 0 200 7"
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M0 6 Q40 1 80 5 Q120 9 160 4 Q180 2 200 5"
+                    stroke="#185FA5"
+                    strokeWidth="2.5"
+                    fill="none"
+                    strokeLinecap="round"
+                    opacity="0.55"
+                  />
+                </svg>
+              </span>
             </h2>
             <p className="text-slate-500 text-base leading-relaxed">
-              Hear from the people whose lives have been touched by CommunityAid.
+              Voices from community members, volunteers, and donors whose lives have been shaped by CommunityAid across Uganda.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                quote:
-                  "My daughter needed urgent medical transport at 2am and I had no way to reach anyone. Within an hour of posting on CommunityAid, a volunteer was at our door. I don't know what we would have done without this platform.",
-                name: "Aisha Nakamya",
-                role: "Community Member, Kampala",
-                initials: "AN",
-                color: "#185FA5",
-                bg: "#EFF6FF",
-              },
-              {
-                quote:
-                  "I've been volunteering on CommunityAid for six months. The platform makes it easy to find requests near me and actually show up for people. It's the most meaningful thing I do with my weekends.",
-                name: "David Ochieng",
-                role: "Volunteer Responder, Gulu",
-                initials: "DO",
-                color: "#059669",
-                bg: "#ECFDF5",
-              },
-              {
-                quote:
-                  "We donated to three shelter requests after the floods in our district. The transparency on the platform — being able to see exactly how our money was used — made us confident to give more.",
-                name: "Grace Tumusiime",
-                role: "Donor, Mbarara",
-                initials: "GT",
-                color: "#7C3AED",
-                bg: "#F5F3FF",
-              },
-            ].map((t) => (
+          {/* ── Cards — horizontal scroll on mobile, 3-col grid on md+ ── */}
+          <div
+            className="flex gap-5 md:grid md:grid-cols-3 md:gap-6 overflow-x-auto md:overflow-visible pb-4 md:pb-0"
+            style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }}
+          >
+            {(
+              [
+                {
+                  quote:
+                    "My daughter needed urgent medical transport at 2am and I had no way to reach anyone. Within an hour of posting on CommunityAid, a volunteer was at our door. I don't know what we would have done without this platform.",
+                  name: "Aisha Nakamya",
+                  role: "Community Member, Kampala",
+                  initials: "AN",
+                  color: "#185FA5",
+                  colorDark: "#1e40af",
+                  bg: "#EFF6FF",
+                  tag: "Member",
+                  featured: false,
+                },
+                {
+                  quote:
+                    "I've been volunteering on CommunityAid for six months. The platform makes it easy to find requests near me and actually show up for people. It's the most meaningful thing I do with my weekends.",
+                  name: "David Ochieng",
+                  role: "Volunteer Responder, Gulu",
+                  initials: "DO",
+                  color: "#059669",
+                  colorDark: "#047857",
+                  bg: "#ECFDF5",
+                  tag: "Volunteer",
+                  featured: true,
+                },
+                {
+                  quote:
+                    "We donated to three shelter requests after the floods in our district. The transparency on the platform — seeing exactly how our money was used — made us confident to give more.",
+                  name: "Grace Tumusiime",
+                  role: "Donor, Mbarara",
+                  initials: "GT",
+                  color: "#185FA5",
+                  colorDark: "#1e40af",
+                  bg: "#EFF6FF",
+                  tag: "Donor",
+                  featured: false,
+                },
+              ] as Array<{
+                quote: string; name: string; role: string; initials: string;
+                color: string; colorDark: string; bg: string; tag: string; featured: boolean;
+              }>
+            ).map((t) => (
               <div
                 key={t.name}
-                className="bg-white rounded-2xl p-7 border border-gray-100 shadow-sm flex flex-col gap-5"
+                className="relative flex flex-col gap-4 bg-white rounded-3xl p-7 border border-gray-100/80 transition-all duration-300 hover:-translate-y-1"
+                style={{
+                  scrollSnapAlign: "start",
+                  minWidth: "min(82vw, 320px)",
+                  flex: "0 0 auto",
+                  boxShadow: t.featured
+                    ? "0 8px 40px rgba(5,150,105,0.13), 0 2px 8px rgba(0,0,0,0.06)"
+                    : "0 4px 24px rgba(15,23,42,0.07)",
+                  borderColor: t.featured ? "#A7F3D0" : undefined,
+                  transform: t.featured ? "translateY(-6px)" : undefined,
+                }}
               >
-                {/* Quote mark */}
-                <svg
-                  className="h-8 w-8 shrink-0"
-                  style={{ color: t.color, opacity: 0.25 }}
-                  fill="currentColor"
-                  viewBox="0 0 32 32"
-                >
-                  <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z" />
-                </svg>
+                {/* Accent top bar */}
+                <div
+                  className="absolute top-0 left-0 right-0 h-[3.5px] rounded-t-3xl"
+                  style={{ background: `linear-gradient(90deg, ${t.color}, ${t.colorDark})` }}
+                />
 
-                <p className="text-sm text-slate-600 leading-relaxed flex-1 italic">
-                  "{t.quote}"
-                </p>
-
-                <div className="flex items-center gap-3 pt-2 border-t border-gray-100">
+                {/* Featured badge */}
+                {t.featured && (
                   <div
-                    className="h-10 w-10 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
-                    style={{ background: t.color }}
+                    className="absolute -top-3.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1 rounded-full text-white text-[11px] font-bold shadow-sm"
+                    style={{ background: `linear-gradient(90deg, ${t.color}, ${t.colorDark})` }}
                   >
-                    {t.initials}
+                    <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                    Featured Story
                   </div>
-                  <div>
-                    <p className="text-sm font-bold text-slate-900">{t.name}</p>
-                    <p className="text-xs text-slate-400">{t.role}</p>
+                )}
+
+                {/* Stars */}
+                <div className="flex gap-0.5 mt-1">
+                  {[0, 1, 2, 3, 4].map((si) => (
+                    <svg key={si} className="h-4 w-4" style={{ color: "#F59E0B" }} fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+
+                {/* Quote body */}
+                <div className="relative flex-1">
+                  <svg
+                    className="absolute -top-0.5 -left-0.5 h-7 w-7 shrink-0"
+                    style={{ color: t.color, opacity: 0.18 }}
+                    fill="currentColor"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z" />
+                  </svg>
+                  <p className="text-[14px] text-slate-600 leading-[1.75] pl-5 italic">
+                    "{t.quote}"
+                  </p>
+                </div>
+
+                {/* Divider */}
+                <div className="h-px bg-gradient-to-r from-transparent via-gray-150 to-transparent" style={{ background: "linear-gradient(90deg, transparent, #e2e8f0, transparent)" }} />
+
+                {/* Author row */}
+                <div className="flex items-center gap-3">
+                  {/* Avatar with ring */}
+                  <div className="relative shrink-0">
+                    <div
+                      className="h-11 w-11 rounded-full flex items-center justify-center text-sm font-extrabold text-white"
+                      style={{ background: `linear-gradient(135deg, ${t.color} 0%, ${t.colorDark} 100%)` }}
+                    >
+                      {t.initials}
+                    </div>
+                    <div
+                      className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-white"
+                      style={{ background: t.color }}
+                    />
+                  </div>
+
+                  {/* Name & location */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-slate-900 truncate">{t.name}</p>
+                    <p className="text-xs text-slate-400 truncate">{t.role}</p>
+                  </div>
+
+                  {/* Role badge */}
+                  <div
+                    className="shrink-0 px-2.5 py-1 rounded-full text-[11px] font-bold border"
+                    style={{ background: t.bg, color: t.color, borderColor: t.bg }}
+                  >
+                    {t.tag}
                   </div>
                 </div>
               </div>
             ))}
           </div>
+
+          {/* Mobile scroll indicator */}
+          <div className="flex justify-center gap-2 mt-5 md:hidden">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="h-1.5 rounded-full transition-all duration-300"
+                style={{ width: i === 1 ? "20px" : "6px", background: i === 1 ? "#185FA5" : "#CBD5E1" }}
+              />
+            ))}
+          </div>
+
+          {/* ── Social proof trust bar ── */}
+          <div className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+            {/* Stacked avatars */}
+            <div className="flex -space-x-2.5">
+              {(
+                [
+                  { initials: "AN", color: "#185FA5" },
+                  { initials: "DO", color: "#059669" },
+                  { initials: "GT", color: "#185FA5" },
+                  { initials: "MK", color: "#D97706" },
+                ] as Array<{ initials: string; color: string }>
+              ).map((a, idx) => (
+                <div
+                  key={a.initials}
+                  className="h-9 w-9 rounded-full border-2 border-white flex items-center justify-center text-white text-[10px] font-bold shadow-sm"
+                  style={{ background: a.color, zIndex: 10 - idx }}
+                >
+                  {a.initials}
+                </div>
+              ))}
+              <div
+                className="h-9 w-9 rounded-full border-2 border-white flex items-center justify-center text-slate-600 bg-slate-100 text-[10px] font-bold shadow-sm"
+                style={{ zIndex: 6 }}
+              >
+                +2k
+              </div>
+            </div>
+
+            {/* Text */}
+            <div className="text-center sm:text-left">
+              <p className="text-sm text-slate-600 leading-snug">
+                Joined by{" "}
+                <span className="font-bold text-slate-900">2,400+</span> people helping communities across Uganda
+              </p>
+              <div className="flex items-center justify-center sm:justify-start gap-1 mt-0.5">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <svg key={i} className="h-3.5 w-3.5" style={{ color: "#F59E0B" }} fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                ))}
+                <span className="text-xs font-semibold text-slate-500 ml-1">4.9 / 5 from our community</span>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 

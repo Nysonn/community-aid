@@ -13,7 +13,7 @@ import { TYPE_BADGE, STATUS_BADGE } from "../components/requests/RequestCard";
 import type { Offer } from "../types";
 
 const OFFER_TYPE_BADGE: Record<Offer["offer_type"], string> = {
-  transport: "bg-purple-100 text-purple-700",
+  transport: "bg-blue-100 text-blue-700",
   donation: "bg-teal-100 text-teal-700",
   expertise: "bg-orange-100 text-orange-700",
 };
