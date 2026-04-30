@@ -16,22 +16,25 @@ import {
   usePromoteToAdmin,
   useDemoteFromAdmin,
 } from "../hooks/useAdmin";
-import { useApproveRequest, useRejectRequest } from "../hooks/useRequests";
+import { useApproveRequest, useRejectRequest, useDeleteRequest } from "../hooks/useRequests";
 import { useUpdateOfferStatus } from "../hooks/useOffers";
 import RequestDetailModal from "../components/requests/RequestDetailModal";
-import type { Offer } from "../types";
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 
-const OFFER_TYPE_BADGE: Record<Offer["offer_type"], string> = {
-  transport: "bg-blue-50 text-blue-700 border-blue-200",
-  donation: "bg-teal-50 text-teal-700 border-teal-200",
-  expertise: "bg-orange-50 text-orange-700 border-orange-200",
-};
+function offerTypeBadge(type: string): string {
+  switch (type) {
+    case "transport":  return "bg-[#F5F5F5] text-brand-charcoal border-[#D6D6D6]";
+    case "donation":   return "bg-coral-50 text-coral-600 border-coral-200";
+    case "expertise":  return "bg-brand-yellow-light text-brand-yellow-dark border-yellow-200";
+    case "material":   return "bg-orange-50 text-orange-600 border-orange-200";
+    default:           return "bg-slate-50 text-slate-500 border-slate-200";
+  }
+}
 
-const OFFER_STATUS_BADGE: Record<Offer["status"], string> = {
-  pending: "bg-amber-50 text-amber-700 border-amber-200",
-  accepted: "bg-emerald-50 text-emerald-700 border-emerald-200",
+const OFFER_STATUS_BADGE: Record<string, string> = {
+  pending:   "bg-brand-yellow-light text-brand-yellow-dark border-yellow-200",
+  accepted:  "bg-coral-50 text-coral-600 border-coral-200",
   fulfilled: "bg-slate-100 text-slate-500 border-slate-200",
 };
 
@@ -68,9 +71,9 @@ function TableWrap({ children }: { children: React.ReactNode }) {
 function THead({ columns }: { columns: string[] }) {
   return (
     <thead>
-      <tr style={{ background: "linear-gradient(90deg, #f8faff 0%, #f0f6ff 100%)", borderBottom: "1px solid #e2e8f0" }}>
+      <tr style={{ background: "linear-gradient(90deg, #FEF0ED 0%, #fff5f3 100%)", borderBottom: "1px solid #f9d4cc" }}>
         {columns.map((col) => (
-          <th key={col} className="px-5 py-3.5 text-left text-[11px] font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">
+          <th key={col} className="px-5 py-3.5 text-left text-[11px] font-bold text-coral-600 uppercase tracking-widest whitespace-nowrap">
             {col}
           </th>
         ))}
@@ -168,7 +171,7 @@ function SectionHeader({
         <div className="flex items-center gap-2.5 mb-0.5">
           <h2 className="text-lg font-extrabold text-slate-900 tracking-tight">{title}</h2>
           {count !== undefined && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-100">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-coral-50 text-coral-600 border border-coral-100">
               {count}
             </span>
           )}
@@ -203,7 +206,7 @@ function RequestFilters({
 }) {
   const hasFilters = typeFilter || statusFilter || locationFilter;
   const selectClass =
-    "border border-gray-200 rounded-xl px-3.5 py-2 text-sm bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent shadow-sm transition-shadow";
+    "border border-gray-200 rounded-xl px-3.5 py-2 text-sm bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm transition-shadow";
 
   return (
     <div className="flex flex-wrap gap-2.5 mb-6 items-center p-4 bg-slate-50/70 rounded-2xl border border-gray-100">
@@ -261,14 +264,14 @@ function ActionBtn({
 }: {
   onClick: () => void;
   disabled?: boolean;
-  variant: "green" | "red" | "blue" | "outline" | "indigo";
+  variant: "green" | "red" | "coral" | "outline" | "yellow";
   children: React.ReactNode;
 }) {
   const styles: Record<string, string> = {
-    green: "bg-emerald-500 hover:bg-emerald-600 text-white border-transparent shadow-sm shadow-emerald-200",
-    red: "bg-red-500 hover:bg-red-600 text-white border-transparent shadow-sm shadow-red-200",
-    blue: "bg-blue-600 hover:bg-blue-700 text-white border-transparent shadow-sm shadow-blue-200",
-    indigo: "bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200",
+    green:   "bg-emerald-500 hover:bg-emerald-600 text-white border-transparent shadow-sm shadow-emerald-200",
+    red:     "bg-red-500 hover:bg-red-600 text-white border-transparent shadow-sm shadow-red-200",
+    coral:   "bg-coral-500 hover:bg-coral-600 text-white border-transparent shadow-coral",
+    yellow:  "bg-brand-yellow-light hover:bg-yellow-100 text-brand-yellow-dark border-yellow-200",
     outline: "bg-white hover:bg-slate-50 text-slate-600 border-gray-200",
   };
   return (
@@ -313,7 +316,7 @@ function OverviewTab() {
           <span className="h-px flex-1 bg-gray-100" /> People <span className="h-px flex-1 bg-gray-100" />
         </p>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          <StatCard label="Total Community Members" value={stats.total_users} color="#185FA5" bg="#EFF6FF" border="#BFDBFE" iconPath="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+          <StatCard label="Total Community Members" value={stats.total_users} color="#E8452A" bg="#FEF0ED" border="#FCDDD7" iconPath="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
           <StatCard label="Active Members" value={stats.active_users} color="#059669" bg="#ECFDF5" border="#A7F3D0" iconPath="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           <StatCard label="Inactive Members" value={stats.total_users - stats.active_users} color="#94a3b8" bg="#f8fafc" border="#e2e8f0" iconPath="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </div>
@@ -325,8 +328,8 @@ function OverviewTab() {
           <span className="h-px flex-1 bg-gray-100" /> Requests <span className="h-px flex-1 bg-gray-100" />
         </p>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard label="Total Requests" value={stats.total_requests} color="#185FA5" bg="#EFF6FF" border="#BFDBFE" iconPath="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-          <StatCard label="Pending Review" value={stats.pending_requests} color="#D97706" bg="#FFFBEB" border="#FDE68A" iconPath="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <StatCard label="Total Requests" value={stats.total_requests} color="#E8452A" bg="#FEF0ED" border="#FCDDD7" iconPath="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          <StatCard label="Pending Review" value={stats.pending_requests} color="#D4A80A" bg="#FEFCE8" border="#FEF08A" iconPath="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           <StatCard label="Approved" value={stats.approved_requests} color="#059669" bg="#ECFDF5" border="#A7F3D0" iconPath="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           <StatCard label="Rejected" value={stats.rejected_requests} color="#DC2626" bg="#FEF2F2" border="#FECACA" iconPath="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </div>
@@ -338,10 +341,10 @@ function OverviewTab() {
           <span className="h-px flex-1 bg-gray-100" /> Aid &amp; Finance <span className="h-px flex-1 bg-gray-100" />
         </p>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard label="Total Offers" value={stats.total_offers} color="#185FA5" bg="#EFF6FF" border="#BFDBFE" iconPath="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          <StatCard label="Total Offers" value={stats.total_offers} color="#E8452A" bg="#FEF0ED" border="#FCDDD7" iconPath="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
           <StatCard label="Fulfilled Offers" value={stats.fulfilled_offers} color="#059669" bg="#ECFDF5" border="#A7F3D0" iconPath="M5 13l4 4L19 7" />
-          <StatCard label="Total Donations" value={stats.total_donations} color="#185FA5" bg="#EFF6FF" border="#BFDBFE" iconPath="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          <StatCard label="Total Aid Mobilised" value={formatUGX(stats.total_donation_amount)} color="#D97706" bg="#FFFBEB" border="#FDE68A" iconPath="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+          <StatCard label="Total Donations" value={stats.total_donations} color="#E8452A" bg="#FEF0ED" border="#FCDDD7" iconPath="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <StatCard label="Total Aid Mobilised" value={formatUGX(stats.total_donation_amount)} color="#D4A80A" bg="#FEFCE8" border="#FEF08A" iconPath="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
         </div>
       </div>
     </div>
@@ -355,6 +358,7 @@ function RequestsTab() {
   const [statusFilter, setStatusFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const filters = {
     ...(typeFilter && { type: typeFilter }),
@@ -367,6 +371,7 @@ function RequestsTab() {
   );
   const approveMutation = useApproveRequest();
   const rejectMutation = useRejectRequest();
+  const deleteMutation = useDeleteRequest();
 
   return (
     <div>
@@ -393,9 +398,9 @@ function RequestsTab() {
             : requests.length === 0
             ? <EmptyRow message="No requests match the current filters." />
             : requests.map((r) => (
-                <tr key={r.id} className="hover:bg-blue-50/30 transition-colors group">
+                <tr key={r.id} className="hover:bg-coral-50/20 transition-colors group">
                   <td className="px-5 py-4 max-w-[200px]">
-                    <p className="font-semibold text-slate-900 truncate text-sm">{r.title}</p>
+                    <p className="font-semibold text-brand-charcoal truncate text-sm">{r.title}</p>
                   </td>
                   <td className="px-5 py-4">
                     <Badge label={r.type} className={TYPE_BADGE[r.type]} />
@@ -404,37 +409,67 @@ function RequestsTab() {
                     <Badge label={r.status} className={STATUS_BADGE[r.status]} />
                   </td>
                   <td className="px-5 py-4 text-slate-500 text-sm max-w-[140px] truncate">{r.location_name}</td>
-                  <td className="px-5 py-4 text-slate-700 text-sm">
-                    {r.poster_name || <span className="font-mono text-xs text-slate-400">{r.user_id.slice(0, 8)}…</span>}
+                  <td className="px-5 py-4">
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-sm font-semibold text-brand-charcoal">
+                        {r.poster_name || <span className="font-mono text-xs text-slate-400">{r.user_id.slice(0, 8)}…</span>}
+                      </span>
+                      {r.poster_phone && (
+                        <a href={`tel:${r.poster_phone}`} className="text-xs text-slate-400 hover:text-coral-500 transition-colors">{r.poster_phone}</a>
+                      )}
+                      {r.poster_email && (
+                        <a href={`mailto:${r.poster_email}`} className="text-xs text-slate-400 hover:text-coral-500 transition-colors">{r.poster_email}</a>
+                      )}
+                    </div>
                   </td>
                   <td className="px-5 py-4 text-slate-400 whitespace-nowrap text-xs">{formatDate(r.created_at)}</td>
                   <td className="px-5 py-4">
-                    <div className="flex items-center gap-1.5">
-                      {r.status === "pending" && (
-                        <>
-                          <ActionBtn
-                            variant="green"
-                            onClick={() => approveMutation.mutate(r.id)}
-                            disabled={approveMutation.isPending && approveMutation.variables === r.id}
-                          >
-                            <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
-                            Approve
-                          </ActionBtn>
-                          <ActionBtn
-                            variant="red"
-                            onClick={() => rejectMutation.mutate(r.id)}
-                            disabled={rejectMutation.isPending && rejectMutation.variables === r.id}
-                          >
-                            <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
-                            Reject
-                          </ActionBtn>
-                        </>
-                      )}
-                      <ActionBtn variant="outline" onClick={() => setSelectedRequestId(r.id)}>
-                        <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                        View
-                      </ActionBtn>
-                    </div>
+                    {confirmDeleteId === r.id ? (
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs text-slate-500 font-medium">Delete?</span>
+                        <ActionBtn
+                          variant="red"
+                          onClick={() => { deleteMutation.mutate(r.id); setConfirmDeleteId(null); }}
+                          disabled={deleteMutation.isPending}
+                        >
+                          Yes
+                        </ActionBtn>
+                        <ActionBtn variant="outline" onClick={() => setConfirmDeleteId(null)}>
+                          No
+                        </ActionBtn>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1.5">
+                        {r.status === "pending" && (
+                          <>
+                            <ActionBtn
+                              variant="green"
+                              onClick={() => approveMutation.mutate(r.id)}
+                              disabled={approveMutation.isPending && approveMutation.variables === r.id}
+                            >
+                              <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                              Approve
+                            </ActionBtn>
+                            <ActionBtn
+                              variant="red"
+                              onClick={() => rejectMutation.mutate(r.id)}
+                              disabled={rejectMutation.isPending && rejectMutation.variables === r.id}
+                            >
+                              <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+                              Reject
+                            </ActionBtn>
+                          </>
+                        )}
+                        <ActionBtn variant="outline" onClick={() => setSelectedRequestId(r.id)}>
+                          <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                          View
+                        </ActionBtn>
+                        <ActionBtn variant="red" onClick={() => setConfirmDeleteId(r.id)}>
+                          <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                          Delete
+                        </ActionBtn>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))
@@ -469,11 +504,11 @@ function OffersTab() {
             : offers.length === 0
             ? <EmptyRow message="No offers found." />
             : offers.map((o) => (
-                <tr key={o.id} className="hover:bg-blue-50/30 transition-colors">
+                <tr key={o.id} className="hover:bg-coral-50/20 transition-colors">
                   <td className="px-5 py-4 font-semibold text-slate-900 text-sm">{o.responder_name}</td>
                   <td className="px-5 py-4 text-slate-500 text-sm">{o.responder_contact}</td>
                   <td className="px-5 py-4">
-                    <Badge label={o.offer_type} className={OFFER_TYPE_BADGE[o.offer_type]} />
+                    <Badge label={o.offer_type} className={offerTypeBadge(o.offer_type)} />
                   </td>
                   <td className="px-5 py-4">
                     <Badge label={o.status} className={OFFER_STATUS_BADGE[o.status]} />
@@ -482,7 +517,7 @@ function OffersTab() {
                     <button
                       onClick={() => setSelectedRequestId(o.request_id)}
                       title="View linked request"
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 border border-blue-100 px-2.5 py-1 rounded-lg transition-colors"
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-coral-600 hover:text-coral-800 bg-coral-50 hover:bg-coral-100 border border-coral-100 px-2.5 py-1 rounded-lg transition-colors"
                     >
                       <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
@@ -504,7 +539,7 @@ function OffersTab() {
                       )}
                       {o.status === "accepted" && (
                         <ActionBtn
-                          variant="blue"
+                          variant="coral"
                           onClick={() => offerStatusMutation.mutate({ offerId: o.id, status: "fulfilled" })}
                           disabled={offerStatusMutation.isPending}
                         >
@@ -557,10 +592,10 @@ function UsersTab() {
               : admins.length === 0
               ? <EmptyRow message="No admin accounts yet." />
               : admins.map((u) => (
-                  <tr key={u.id} className="hover:bg-blue-50/30 transition-colors">
+                  <tr key={u.id} className="hover:bg-coral-50/20 transition-colors">
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                        <div className="h-8 w-8 rounded-full bg-gradient-to-br from-coral-500 to-coral-700 flex items-center justify-center text-white text-xs font-bold shrink-0">
                           {u.full_name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase()}
                         </div>
                         <span className="font-semibold text-slate-900 text-sm">{u.full_name}</span>
@@ -568,7 +603,7 @@ function UsersTab() {
                     </td>
                     <td className="px-5 py-4 text-slate-500 text-sm">{u.email}</td>
                     <td className="px-5 py-4">
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 uppercase tracking-wider">
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-coral-50 text-coral-600 border border-coral-200 uppercase tracking-wider">
                         <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
                         Admin
                       </span>
@@ -604,12 +639,12 @@ function UsersTab() {
               : members.length === 0
               ? <EmptyRow message="No community members found." />
               : members.map((u) => (
-                  <tr key={u.id} className="hover:bg-blue-50/30 transition-colors">
+                  <tr key={u.id} className="hover:bg-coral-50/20 transition-colors">
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
                         <div
                           className="h-8 w-8 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
-                          style={{ background: u.is_active ? "linear-gradient(135deg, #185FA5, #2563eb)" : "#94a3b8" }}
+                          style={{ background: u.is_active ? "linear-gradient(135deg, #E8452A, #C53B22)" : "#94a3b8" }}
                         >
                           {u.full_name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase()}
                         </div>
@@ -648,7 +683,7 @@ function UsersTab() {
                           </ActionBtn>
                         )}
                         <ActionBtn
-                          variant="indigo"
+                          variant="yellow"
                           onClick={() => promoteMutation.mutate(u.id)}
                           disabled={promoteMutation.isPending && promoteMutation.variables === u.id}
                         >
@@ -686,22 +721,22 @@ function DonationsTab() {
       {/* Summary strip */}
       {!donationsLoading && donations.length > 0 && (
         <div className="flex flex-wrap gap-4 mb-6">
-          <div className="flex items-center gap-3 bg-blue-50 border border-blue-100 rounded-2xl px-5 py-3">
-            <svg className="h-5 w-5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="flex items-center gap-3 bg-coral-50 border border-coral-100 rounded-2xl px-5 py-3">
+            <svg className="h-5 w-5 text-coral-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <div>
-              <p className="text-xs text-blue-600 font-semibold">Total Collected</p>
-              <p className="text-base font-extrabold text-blue-900">{formatUGX(totalAmount)}</p>
+              <p className="text-xs text-coral-600 font-semibold">Total Collected</p>
+              <p className="text-base font-extrabold text-brand-charcoal">{formatUGX(totalAmount)}</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 bg-emerald-50 border border-emerald-100 rounded-2xl px-5 py-3">
-            <svg className="h-5 w-5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="flex items-center gap-3 bg-brand-yellow-light border border-yellow-200 rounded-2xl px-5 py-3">
+            <svg className="h-5 w-5 text-brand-yellow shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
             <div>
-              <p className="text-xs text-emerald-600 font-semibold">Total Donors</p>
-              <p className="text-base font-extrabold text-emerald-900">{donations.length}</p>
+              <p className="text-xs text-brand-yellow-dark font-semibold">Total Donors</p>
+              <p className="text-base font-extrabold text-brand-charcoal">{donations.length}</p>
             </div>
           </div>
         </div>
@@ -715,17 +750,17 @@ function DonationsTab() {
             : donations.length === 0
             ? <EmptyRow message="No donations recorded yet." />
             : donations.map((d) => (
-                <tr key={d.id} className="hover:bg-blue-50/30 transition-colors">
+                <tr key={d.id} className="hover:bg-coral-50/20 transition-colors">
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="h-8 w-8 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold shrink-0">
+                      <div className="h-8 w-8 rounded-full bg-coral-50 border border-coral-100 flex items-center justify-center text-coral-600 text-xs font-bold shrink-0">
                         {d.donor_name.charAt(0).toUpperCase()}
                       </div>
                       <span className="font-semibold text-slate-900 text-sm">{d.donor_name}</span>
                     </div>
                   </td>
                   <td className="px-5 py-4">
-                    <span className="font-bold text-emerald-700 text-sm">{formatUGX(d.amount)}</span>
+                    <span className="font-bold text-coral-600 text-sm">{formatUGX(d.amount)}</span>
                   </td>
                   <td className="px-5 py-4 text-slate-500 text-sm max-w-[220px] truncate">
                     {requestTitleMap.get(d.request_id) ?? (
@@ -772,13 +807,13 @@ function DisbursementsTab() {
               <p className="text-base font-extrabold text-amber-900">{pending.length}</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 bg-emerald-50 border border-emerald-100 rounded-2xl px-5 py-3">
-            <svg className="h-5 w-5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="flex items-center gap-3 bg-brand-yellow-light border border-yellow-200 rounded-2xl px-5 py-3">
+            <svg className="h-5 w-5 text-brand-yellow shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <div>
-              <p className="text-xs text-emerald-600 font-semibold">Disbursed</p>
-              <p className="text-base font-extrabold text-emerald-900">{disbursed.length}</p>
+              <p className="text-xs text-brand-yellow-dark font-semibold">Disbursed</p>
+              <p className="text-base font-extrabold text-brand-charcoal">{disbursed.length}</p>
             </div>
           </div>
         </div>
@@ -792,7 +827,7 @@ function DisbursementsTab() {
             onClick={() => setStatusFilter(s)}
             className={`px-4 py-1.5 rounded-xl text-xs font-semibold border-2 transition-all ${
               statusFilter === s
-                ? "border-blue-500 text-blue-700 bg-blue-50"
+                ? "border-coral-500 text-coral-700 bg-coral-50"
                 : "border-gray-200 text-slate-500 hover:border-gray-300 hover:bg-gray-50"
             }`}
           >
@@ -809,7 +844,7 @@ function DisbursementsTab() {
             : disbursements.length === 0
             ? <EmptyRow message="No disbursements found." />
             : disbursements.map((d) => (
-                <tr key={d.id} className="hover:bg-blue-50/30 transition-colors">
+                <tr key={d.id} className="hover:bg-coral-50/20 transition-colors">
                   <td className="px-5 py-4 max-w-[160px]">
                     <p className="font-semibold text-slate-900 text-xs truncate">{d.request_title}</p>
                   </td>
@@ -844,8 +879,8 @@ function DisbursementsTab() {
                       <Badge
                         label={d.status}
                         className={d.status === "pending"
-                          ? "bg-amber-50 text-amber-700 border-amber-200"
-                          : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                          ? "bg-brand-yellow-light text-brand-yellow-dark border-yellow-200"
+                          : "bg-coral-50 text-coral-600 border-coral-200"
                         }
                       />
                       {d.disbursed_at && (
@@ -888,27 +923,27 @@ const SIDEBAR_ITEMS: { id: Tab; label: string; subtitle: string; color: string; 
     id: "overview",
     label: "Overview",
     subtitle: "Stats at a glance",
-    color: "#185FA5",
-    bg: "#EFF6FF",
-    border: "#BFDBFE",
+    color: "#E8452A",
+    bg: "#FEF0ED",
+    border: "#FCDDD7",
     iconPath: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
   },
   {
     id: "requests",
     label: "Requests",
     subtitle: "Review & approve",
-    color: "#D97706",
-    bg: "#FFFBEB",
-    border: "#FDE68A",
+    color: "#D4A80A",
+    bg: "#FEFCE8",
+    border: "#FEF08A",
     iconPath: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4",
   },
   {
     id: "offers",
     label: "Offers",
     subtitle: "Responder activity",
-    color: "#185FA5",
-    bg: "#EFF6FF",
-    border: "#BFDBFE",
+    color: "#E8452A",
+    bg: "#FEF0ED",
+    border: "#FCDDD7",
     iconPath: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z",
   },
   {
@@ -924,9 +959,9 @@ const SIDEBAR_ITEMS: { id: Tab; label: string; subtitle: string; color: string; 
     id: "donations",
     label: "Donations",
     subtitle: "Track incoming funds",
-    color: "#185FA5",
-    bg: "#EFF6FF",
-    border: "#BFDBFE",
+    color: "#E8452A",
+    bg: "#FEF0ED",
+    border: "#FCDDD7",
     iconPath: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
   },
   {
@@ -999,13 +1034,13 @@ const AdminDashboardPage = () => {
             <img src="/logo.png" alt="CommunityAid" className="h-8 w-8 object-contain drop-shadow-sm transition-transform duration-200 group-hover:scale-105" />
             <span className="select-none" style={{ display: "flex", alignItems: "baseline", gap: "4px" }}>
               <span style={{ fontFamily: "system-ui, sans-serif", fontWeight: 500, fontSize: "17px", letterSpacing: "-0.5px", color: "#0f172a" }}>Community</span>
-              <span style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontWeight: 700, fontSize: "18px", letterSpacing: "-0.5px", color: "#185FA5" }}>Aid</span>
-              <span aria-hidden="true" style={{ width: "5px", height: "5px", borderRadius: "999px", background: "#185FA5", alignSelf: "flex-start", marginTop: "5px", marginLeft: "1px", flexShrink: 0 }} />
+              <span style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontWeight: 700, fontSize: "18px", letterSpacing: "-0.5px", color: "#E8452A" }}>Aid</span>
+              <span aria-hidden="true" style={{ width: "5px", height: "5px", borderRadius: "999px", background: "#E8452A", alignSelf: "flex-start", marginTop: "5px", marginLeft: "1px", flexShrink: 0 }} />
             </span>
           </Link>
           <div
             className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest"
-            style={{ background: "#EFF6FF", color: "#185FA5", border: "1px solid #BFDBFE" }}
+            style={{ background: "#FEF0ED", color: "#E8452A", border: "1px solid #FCDDD7" }}
           >
             <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -1079,7 +1114,7 @@ const AdminDashboardPage = () => {
         {user?.full_name && (
           <div className="px-4 pb-4">
             <div className="flex items-center gap-3 rounded-xl px-3 py-3 border border-gray-100 bg-slate-50">
-              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-xs font-bold shadow-sm ring-2 ring-blue-100 shrink-0">
+              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-coral-500 to-coral-700 flex items-center justify-center text-white text-xs font-bold shadow-sm ring-2 ring-coral-100 shrink-0">
                 {initials}
               </div>
               <div className="flex-1 min-w-0">

@@ -20,11 +20,11 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
   const { showToast } = useGlobalToast();
   const createOfferMutation = useCreateOffer();
   const canReceiveDonations = canRequestReceiveDonations(request);
-  const availableOfferTypes: Array<Offer["offer_type"]> = canReceiveDonations
-    ? ["transport", "donation", "expertise"]
-    : ["transport", "expertise"];
+  const availableOfferTypes: Array<string> = canReceiveDonations
+    ? ["transport", "donation", "expertise", "material"]
+    : ["transport", "expertise", "material"];
 
-  const resolvedInitial: Offer["offer_type"] = (() => {
+  const resolvedInitial: string = (() => {
     if (initialOfferType === "donation" && canReceiveDonations) return "donation";
     if (initialOfferType && availableOfferTypes.includes(initialOfferType)) return initialOfferType;
     return canReceiveDonations ? "donation" : "transport";
@@ -32,9 +32,10 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
 
   const [responderName, setResponderName] = useState("");
   const [responderContact, setResponderContact] = useState("");
-  const [offerType, setOfferType] = useState<Offer["offer_type"]>(resolvedInitial);
-  // Expertise
+  const [offerType, setOfferType] = useState<string>(resolvedInitial);
+  // Expertise / Material
   const [expertiseDetails, setExpertiseDetails] = useState("");
+  const [materialDetails, setMaterialDetails] = useState("");
   // Transport
   const [vehicleType, setVehicleType] = useState("");
   // Donation
@@ -61,6 +62,7 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
     setResponderContact("");
     setOfferType(resolvedInitial);
     setExpertiseDetails("");
+    setMaterialDetails("");
     setVehicleType("");
     setDonationAmount("");
     setDonorEmail("");
@@ -100,6 +102,10 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
 
     if (offerType === "expertise" && !expertiseDetails.trim()) {
       showToast("Please describe the expertise you are offering.", "error");
+      return;
+    }
+    if (offerType === "material" && !materialDetails.trim()) {
+      showToast("Please describe the material items you can provide.", "error");
       return;
     }
     if (offerType === "transport" && !vehicleType.trim()) {
@@ -153,6 +159,8 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
 
     if (offerType === "expertise") {
       payload.expertise_details = expertiseDetails.trim();
+    } else if (offerType === "material") {
+      payload.expertise_details = materialDetails.trim();
     } else if (offerType === "transport") {
       payload.vehicle_type = vehicleType.trim();
     } else if (offerType === "donation") {
@@ -231,12 +239,12 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
       <div className="relative bg-white rounded-2xl shadow-[0_8px_40px_-8px_rgba(37,99,235,0.18),0_2px_16px_-4px_rgba(0,0,0,0.10)] w-full max-w-lg max-h-[90vh] overflow-y-auto">
 
         {/* Gradient accent line */}
-        <div className="h-px bg-gradient-to-r from-transparent via-emerald-400/50 to-transparent" />
+        <div className="h-px bg-gradient-to-r from-transparent via-coral-400/60 to-transparent" />
 
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <div className="flex items-start gap-2.5">
-            <div className="h-7 w-7 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0 mt-0.5">
-              <svg className="h-4 w-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="h-7 w-7 rounded-lg bg-coral-50 flex items-center justify-center shrink-0 mt-0.5">
+              <svg className="h-4 w-4 text-coral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             </div>
@@ -259,31 +267,31 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
-          <div className="rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 flex items-start gap-2.5">
-            <svg className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="rounded-xl border border-coral-100 bg-coral-50 px-4 py-3 flex items-start gap-2.5">
+            <svg className="h-4 w-4 text-coral-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <p className="text-sm text-emerald-800">
+            <p className="text-sm text-coral-800">
               This request has been approved — you can offer help without creating an account.
             </p>
           </div>
 
           {canReceiveDonations ? (
-            <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 space-y-1.5">
-              <p className="text-xs font-semibold text-blue-700 uppercase tracking-wider">Where to send your donation</p>
+            <div className="rounded-xl border border-coral-100 bg-coral-50 px-4 py-3 space-y-1.5">
+              <p className="text-xs font-semibold text-coral-600 uppercase tracking-wider">Where to send your donation</p>
               {request.payment_type === "bank" ? (
-                <div className="text-sm text-blue-900 space-y-0.5">
+                <div className="text-sm text-coral-900 space-y-0.5">
                   <p><span className="font-medium">Bank:</span> {request.bank_name}</p>
                   <p><span className="font-medium">Account Name:</span> {request.bank_account_name}</p>
                   <p><span className="font-medium">Account Number:</span> {request.bank_account_number}</p>
                 </div>
               ) : (
-                <div className="text-sm text-blue-900 space-y-0.5">
+                <div className="text-sm text-coral-900 space-y-0.5">
                   <p><span className="font-medium">Provider:</span> {request.receiving_mobile_provider === "mtn_momo" ? "MTN MoMo" : "Airtel Money"}</p>
                   <p><span className="font-medium">Number:</span> {request.receiving_mobile_number}</p>
                 </div>
               )}
-              <p className="text-xs text-blue-600 pt-0.5">
+              <p className="text-xs text-coral-500 pt-0.5">
                 Send your donation to the CommunityAid admin account — they will forward it to the recipient.
               </p>
             </div>
@@ -309,7 +317,7 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
                 required
                 value={responderName}
                 onChange={(e) => setResponderName(e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm"
                 placeholder="Full name"
               />
             </div>
@@ -322,7 +330,7 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
                 required
                 value={responderContact}
                 onChange={(e) => setResponderContact(e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm"
                 placeholder="Phone number or email"
               />
             </div>
@@ -335,12 +343,12 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
             <select
               required
               value={offerType}
-              onChange={(e) => setOfferType(e.target.value as Offer["offer_type"])}
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+              onChange={(e) => setOfferType(e.target.value)}
+              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm"
             >
-              {availableOfferTypes.map((type) => (
-                <option key={type} value={type}>
-                  {type.charAt(0).toUpperCase() + type.slice(1)}
+              {availableOfferTypes.map((t) => (
+                <option key={t} value={t}>
+                  {t === "material" ? "Material Items (blankets, food, clothing…)" : t.charAt(0).toUpperCase() + t.slice(1)}
                 </option>
               ))}
             </select>
@@ -356,9 +364,28 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
                 value={expertiseDetails}
                 onChange={(e) => setExpertiseDetails(e.target.value)}
                 rows={3}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm resize-none"
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm resize-none"
                 placeholder="Describe what expertise you can offer (e.g. medical professional, civil engineer...)"
               />
+            </div>
+          )}
+
+          {offerType === "material" && (
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                What items can you provide? <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                required
+                value={materialDetails}
+                onChange={(e) => setMaterialDetails(e.target.value)}
+                rows={3}
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm resize-none"
+                placeholder="e.g. 10 blankets, 20kg maize flour, children's clothing (size 4–8)…"
+              />
+              <p className="mt-1 text-xs text-slate-400">
+                Be specific about what you can donate and approximately how many / how much.
+              </p>
             </div>
           )}
 
@@ -372,7 +399,7 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
                 required
                 value={vehicleType}
                 onChange={(e) => setVehicleType(e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm"
                 placeholder="e.g. Pickup truck, Ambulance, Motorcycle..."
               />
             </div>
@@ -390,7 +417,7 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
                   required
                   value={donationAmount}
                   onChange={(e) => setDonationAmount(e.target.value)}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm"
                   placeholder="e.g. 50000"
                 />
               </div>
@@ -404,7 +431,7 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
                   required
                   value={donorEmail}
                   onChange={(e) => setDonorEmail(e.target.value)}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm"
                   placeholder="you@example.com"
                 />
                 <p className="mt-1 text-xs text-slate-400">
@@ -421,7 +448,7 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
                   onChange={(e) =>
                     setPaymentMethod(e.target.value as "mobile_money" | "visa")
                   }
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm"
                 >
                   <option value="mobile_money">Mobile Money</option>
                   <option value="visa">VISA Card</option>
@@ -441,7 +468,7 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
                           e.target.value as "airtel_money" | "mtn_momo"
                         )
                       }
-                      className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                      className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm"
                     >
                       <option value="mtn_momo">MTN MoMo</option>
                       <option value="airtel_money">Airtel Money</option>
@@ -456,7 +483,7 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
                       required
                       value={mobileMoneyNumber}
                       onChange={(e) => setMobileMoneyNumber(e.target.value)}
-                      className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                      className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm"
                       placeholder="e.g. 0701234567"
                     />
                   </div>
@@ -496,7 +523,7 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
                                 ? "border-red-300 focus:ring-red-400 bg-red-50"
                                 : isComplete
                                 ? "border-emerald-300 focus:ring-emerald-400"
-                                : "border-gray-200 focus:ring-blue-500"
+                                : "border-gray-200 focus:ring-coral-400"
                               }`}
                             placeholder="1234 5678 9012 3456"
                           />
@@ -507,9 +534,9 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
                               <span />
                             )}
                             <p className={`text-xs font-medium tabular-nums ml-auto ${
-                              isComplete ? "text-emerald-600" : isError ? "text-red-500" : "text-slate-400"
+                              isComplete ? "text-coral-500" : isError ? "text-red-500" : "text-slate-400"
                             }`}>
-                              {digits.length} / 16
+                              {digits.length}&nbsp;/ 16
                             </p>
                           </div>
                         </>
@@ -528,7 +555,7 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
                         required
                         value={cardExpiryMonth}
                         onChange={(e) => setCardExpiryMonth(e.target.value)}
-                        className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                        className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm"
                         placeholder="MM"
                       />
                     </div>
@@ -542,7 +569,7 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
                         required
                         value={cardExpiryYear}
                         onChange={(e) => setCardExpiryYear(e.target.value)}
-                        className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                        className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm"
                         placeholder="YYYY"
                       />
                     </div>
@@ -560,7 +587,7 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
                           const raw = e.target.value.replace(/\D/g, "").slice(0, 3);
                           setCardCvc(raw);
                         }}
-                        className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                        className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm"
                         placeholder="123"
                       />
                     </div>
@@ -574,7 +601,7 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
                       required
                       value={cardholderName}
                       onChange={(e) => setCardholderName(e.target.value)}
-                      className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                      className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm"
                       placeholder="Cardholder name"
                     />
                   </div>
@@ -594,7 +621,7 @@ const OfferHelpModal = ({ isOpen, onClose, request, initialOfferType }: Props) =
             <button
               type="submit"
               disabled={createOfferMutation.isPending}
-              className="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md shadow-blue-200/60 hover:shadow-lg active:scale-95"
+              className="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-coral hover:shadow-coral-lg active:scale-95"
             >
               {createOfferMutation.isPending ? "Submitting..." : "Submit Offer"}
             </button>

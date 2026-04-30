@@ -17,7 +17,7 @@ export interface EmergencyRequest {
   user_id: string;
   title: string;
   description: string;
-  type: "medical" | "food" | "rescue" | "shelter";
+  type: string;
   status: "pending" | "approved" | "rejected" | "closed";
   location_name: string;
   latitude?: number;
@@ -36,6 +36,8 @@ export interface EmergencyRequest {
   created_at: string;
   updated_at: string;
   poster_name?: string;
+  poster_phone?: string;
+  poster_email?: string;
 }
 
 export interface Offer {
@@ -43,7 +45,7 @@ export interface Offer {
   request_id: string;
   responder_name: string;
   responder_contact: string;
-  offer_type: "transport" | "donation" | "expertise";
+  offer_type: string;
   status: "pending" | "accepted" | "fulfilled";
   latitude?: number;
   longitude?: number;
@@ -111,7 +113,7 @@ export interface UpdateUserInput {
 export interface UpdateRequestInput {
   title?: string;
   description?: string;
-  type?: "medical" | "food" | "rescue" | "shelter";
+  type?: string;
   status?: "pending" | "approved" | "rejected" | "closed";
   location_name?: string;
   latitude?: number;
@@ -128,7 +130,7 @@ export interface UpdateRequestInput {
 export interface CreateRequestInput {
   title: string;
   description: string;
-  type: "medical" | "food" | "rescue" | "shelter";
+  type: string;
   location_name: string;
   latitude?: number | string;
   longitude?: number | string;
@@ -148,7 +150,7 @@ export interface CreateOfferInput {
   request_id: string;
   responder_name: string;
   responder_contact: string;
-  offer_type: "transport" | "donation" | "expertise";
+  offer_type: string;
   latitude?: number;
   longitude?: number;
   // expertise
