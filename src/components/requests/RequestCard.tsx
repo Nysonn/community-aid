@@ -4,7 +4,7 @@ import RequestDetailModal from "./RequestDetailModal";
 import { canRequestReceiveDonations } from "../../utils";
 import type { EmergencyRequest } from "../../types";
 
-// ─── Badge colour maps (with coral/yellow palette + fallback) ──────────────────
+// ─── Badge colour maps ───────────────────────────────────────────────────────
 
 const KNOWN_TYPES = ["medical", "food", "rescue", "shelter"] as const;
 type KnownType = typeof KNOWN_TYPES[number];
@@ -14,9 +14,9 @@ function isKnownType(t: string): t is KnownType {
 }
 
 const TYPE_BADGE_KNOWN: Record<KnownType, string> = {
-  medical: "bg-coral-50 text-coral-600 border-coral-200",
-  food:    "bg-brand-yellow-light text-brand-yellow-dark border-yellow-200",
-  rescue:  "bg-[#F5F5F5] text-brand-charcoal border-[#D6D6D6]",
+  medical: "bg-blue-50 text-blue-600 border-blue-200",
+  food:    "bg-amber-50 text-amber-700 border-yellow-200",
+  rescue:  "bg-[#F5F5F5] text-slate-800 border-[#D6D6D6]",
   shelter: "bg-orange-50 text-orange-600 border-orange-200",
 };
 
@@ -32,16 +32,16 @@ export const TYPE_BADGE: Record<string, string> = new Proxy(
 );
 
 export const STATUS_BADGE: Record<EmergencyRequest["status"], string> = {
-  pending:  "bg-brand-yellow-light text-brand-yellow-dark",
-  approved: "bg-coral-50 text-coral-600",
-  rejected: "bg-[#F5F5F5] text-brand-charcoal",
+  pending:  "bg-amber-50 text-amber-700",
+  approved: "bg-blue-50 text-blue-600",
+  rejected: "bg-[#F5F5F5] text-slate-800",
   closed:   "bg-gray-100 text-gray-500",
 };
 
 const TYPE_STRIPE_KNOWN: Record<KnownType, string> = {
-  medical: "bg-gradient-to-r from-coral-500 to-coral-600",
-  food:    "bg-gradient-to-r from-brand-yellow to-brand-yellow-dark",
-  rescue:  "bg-gradient-to-r from-brand-charcoal to-brand-charcoal-soft",
+  medical: "bg-gradient-to-r from-blue-500 to-blue-600",
+  food:    "bg-gradient-to-r from-amber-400 to-amber-500",
+  rescue:  "bg-gradient-to-r from-slate-700 to-slate-600",
   shelter: "bg-gradient-to-r from-orange-400 to-orange-500",
 };
 
@@ -52,10 +52,10 @@ function typeStripeClass(type: string): string {
 }
 
 const TYPE_ICON_COLOR_KNOWN: Record<KnownType, string> = {
-  medical: "#E8452A",
-  food:    "#D4A80A",
-  rescue:  "#1A1A1A",
-  shelter: "#EA6D0A",
+  medical: "#2563EB",
+  food:    "#D97706",
+  rescue:  "#475569",
+  shelter: "#EA580C",
 };
 
 function typeIconColor(type: string): string {
@@ -63,9 +63,9 @@ function typeIconColor(type: string): string {
 }
 
 const TYPE_ICON_BG_KNOWN: Record<KnownType, string> = {
-  medical: "#FEF0ED",
-  food:    "#FEFCE8",
-  rescue:  "#F5F5F5",
+  medical: "#EFF6FF",
+  food:    "#FFFBEB",
+  rescue:  "#F8FAFC",
   shelter: "#FFF7ED",
 };
 
@@ -174,7 +174,7 @@ const RequestCard = ({ request }: Props) => {
           </div>
         ) : hasPdfOnly ? (
           <div className="relative h-16 w-full bg-slate-50 flex items-center justify-center gap-2">
-            <svg className="h-7 w-7 text-coral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="h-7 w-7 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">PDF attached</span>
@@ -201,15 +201,15 @@ const RequestCard = ({ request }: Props) => {
               {request.status}
             </span>
             {isApproved && (
-              <span className="ml-auto inline-flex items-center gap-1 text-[10px] font-semibold text-coral-500">
-                <span className="h-1.5 w-1.5 rounded-full bg-coral-500 animate-pulse" />
+              <span className="ml-auto inline-flex items-center gap-1 text-[10px] font-semibold text-blue-500">
+                <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
                 Live
               </span>
             )}
           </div>
 
           {/* Title */}
-          <h3 className="font-extrabold text-brand-charcoal text-[15px] leading-snug tracking-tight">
+          <h3 className="font-extrabold text-slate-800 text-[15px] leading-snug tracking-tight">
             {request.title}
           </h3>
 
@@ -220,18 +220,18 @@ const RequestCard = ({ request }: Props) => {
 
           {/* Fundraising progress */}
           {progressPct !== null && (
-            <div className="space-y-1.5 bg-coral-50 rounded-xl p-3 border border-coral-100">
+            <div className="space-y-1.5 bg-blue-50 rounded-xl p-3 border border-blue-100">
               <div className="flex justify-between text-[11px]">
-                <span className="font-bold text-coral-600">UGX {received.toLocaleString("en-UG")} raised</span>
+                <span className="font-bold text-blue-600">UGX {received.toLocaleString("en-UG")} raised</span>
                 <span className="text-slate-400">of UGX {target!.toLocaleString("en-UG")}</span>
               </div>
-              <div className="h-2 w-full rounded-full bg-coral-100 overflow-hidden">
+              <div className="h-2 w-full rounded-full bg-blue-100 overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-coral-400 to-coral-500 transition-all duration-700"
+                  className="h-full rounded-full bg-gradient-to-r from-blue-400 to-blue-500 transition-all duration-700"
                   style={{ width: `${progressPct}%` }}
                 />
               </div>
-              <p className="text-[10px] text-coral-400 text-right font-medium">{progressPct}% funded</p>
+              <p className="text-[10px] text-blue-400 text-right font-medium">{progressPct}% funded</p>
             </div>
           )}
 
@@ -239,17 +239,17 @@ const RequestCard = ({ request }: Props) => {
           {hasPoster && (
             <div className="flex flex-col gap-0.5 text-[11.5px] text-slate-500 -mt-0.5">
               {request.poster_name && (
-                <span className="font-semibold text-brand-charcoal-soft">{request.poster_name}</span>
+                <span className="font-semibold text-slate-800-soft">{request.poster_name}</span>
               )}
               <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-slate-400">
                 {request.poster_phone && (
-                  <a href={`tel:${request.poster_phone}`} className="hover:text-coral-500 transition-colors flex items-center gap-1">
+                  <a href={`tel:${request.poster_phone}`} className="hover:text-blue-500 transition-colors flex items-center gap-1">
                     <svg className="h-3 w-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
                     {request.poster_phone}
                   </a>
                 )}
                 {request.poster_email && (
-                  <a href={`mailto:${request.poster_email}`} className="hover:text-coral-500 transition-colors flex items-center gap-1">
+                  <a href={`mailto:${request.poster_email}`} className="hover:text-blue-500 transition-colors flex items-center gap-1">
                     <svg className="h-3 w-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                     {request.poster_email}
                   </a>
@@ -278,7 +278,7 @@ const RequestCard = ({ request }: Props) => {
               <button
                 type="button"
                 onClick={() => setShowDonateModal(true)}
-                className="w-full inline-flex items-center justify-center gap-2 text-[13px] font-bold text-white rounded-xl px-4 py-2.5 transition-all duration-200 active:scale-[0.97] hover:shadow-coral-lg"
+                className="w-full inline-flex items-center justify-center gap-2 text-[13px] font-bold text-white rounded-xl px-4 py-2.5 transition-all duration-200 active:scale-[0.97] hover:shadow-blue-300/40"
                 style={{
                   background: "linear-gradient(135deg, #E8452A 0%, #C53B22 100%)",
                   boxShadow: "0 2px 12px rgba(232,69,42,0.30)",
@@ -293,8 +293,8 @@ const RequestCard = ({ request }: Props) => {
 
             {/* Donations pending payout details */}
             {isApproved && !canReceiveDonations && target && target > 0 && (
-              <div className="w-full inline-flex items-center justify-center gap-2 text-[12px] font-medium text-brand-yellow-dark bg-brand-yellow-light border border-yellow-200 rounded-xl px-4 py-2">
-                <svg className="h-3.5 w-3.5 shrink-0 text-brand-yellow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="w-full inline-flex items-center justify-center gap-2 text-[12px] font-medium text-amber-700 bg-amber-50 border border-yellow-200 rounded-xl px-4 py-2">
+                <svg className="h-3.5 w-3.5 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 Donations open once payout details are added
@@ -307,7 +307,7 @@ const RequestCard = ({ request }: Props) => {
                 <button
                   type="button"
                   onClick={() => setShowOfferModal(true)}
-                  className="flex-1 inline-flex items-center justify-center gap-1.5 text-[12.5px] font-semibold text-brand-charcoal hover:text-white bg-brand-yellow-light hover:bg-brand-yellow border border-yellow-200 hover:border-brand-yellow px-3 py-2 rounded-xl transition-all duration-200"
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 text-[12.5px] font-semibold text-slate-800 hover:text-white bg-amber-50 hover:bg-amber-100 border border-yellow-200 hover:border-amber-400 px-3 py-2 rounded-xl transition-all duration-200"
                 >
                   <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -318,7 +318,7 @@ const RequestCard = ({ request }: Props) => {
               <button
                 type="button"
                 onClick={() => setShowDetailModal(true)}
-                className={`inline-flex items-center justify-center gap-1.5 text-[12.5px] font-semibold text-slate-600 hover:text-brand-charcoal bg-slate-50 hover:bg-slate-100 border border-slate-100 px-3 py-2 rounded-xl transition-colors duration-150 ${isApproved ? "flex-1" : "w-full"}`}
+                className={`inline-flex items-center justify-center gap-1.5 text-[12.5px] font-semibold text-slate-600 hover:text-slate-800 bg-slate-50 hover:bg-slate-100 border border-slate-100 px-3 py-2 rounded-xl transition-colors duration-150 ${isApproved ? "flex-1" : "w-full"}`}
               >
                 View Details
                 <svg className="h-3.5 w-3.5 transition-transform duration-150 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

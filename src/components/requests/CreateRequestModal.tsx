@@ -465,12 +465,12 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
       <div className="relative bg-white rounded-2xl shadow-[0_8px_40px_-8px_rgba(37,99,235,0.18),0_2px_16px_-4px_rgba(0,0,0,0.10)] w-full max-w-lg max-h-[90vh] overflow-y-auto">
 
         {/* Gradient accent line */}
-        <div className="h-px bg-gradient-to-r from-transparent via-coral-400/60 to-transparent" />
+        <div className="h-px bg-gradient-to-r from-transparent via-blue-400/50 to-transparent" />
 
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <div className="flex items-center gap-2.5">
-            <div className="h-7 w-7 rounded-lg bg-coral-50 flex items-center justify-center shrink-0">
-              <svg className="h-4 w-4 text-coral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="h-7 w-7 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+              <svg className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isEdit ? "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" : "M12 4v16m8-8H4"} />
               </svg>
             </div>
@@ -499,7 +499,7 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm"
+              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent shadow-sm"
               placeholder="Brief title of the emergency"
             />
           </div>
@@ -513,7 +513,7 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm resize-none"
+              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent shadow-sm resize-none"
               placeholder="Describe the situation in detail"
             />
           </div>
@@ -526,7 +526,7 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
               required
               value={type}
               onChange={(e) => setType(e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm"
+              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent shadow-sm"
             >
               {PRESET_TYPES.map((t) => (
                 <option key={t} value={t} className="capitalize">
@@ -542,7 +542,7 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
                 value={customType}
                 onChange={(e) => setCustomType(e.target.value)}
                 placeholder="Describe the emergency type (e.g. Flooding, Fire)"
-                className="mt-2 w-full border border-coral-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm bg-coral-50 placeholder:text-slate-400"
+                className="mt-2 w-full border border-blue-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent shadow-sm bg-blue-50 placeholder:text-slate-400"
               />
             )}
           </div>
@@ -556,7 +556,7 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
               required
               value={locationName}
               onChange={(e) => setLocationName(e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm"
+              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent shadow-sm"
               placeholder="e.g. Kampala, Nakawa Division"
             />
           </div>
@@ -645,7 +645,7 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
                   step="any"
                   value={manualLat}
                   onChange={(e) => setManualLat(e.target.value)}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent shadow-sm"
                   placeholder="e.g. 0.347596"
                 />
               </div>
@@ -658,7 +658,7 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
                   step="any"
                   value={manualLng}
                   onChange={(e) => setManualLng(e.target.value)}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent shadow-sm"
                   placeholder="e.g. 32.582520"
                 />
               </div>
@@ -676,7 +676,7 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
                 accept="image/*,application/pdf"
                 multiple
                 onChange={handleFileChange}
-                className="w-full text-sm text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-coral-50 file:text-coral-600 hover:file:bg-coral-100"
+                className="w-full text-sm text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
               />
               {previewUrls.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">
@@ -711,7 +711,7 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
                 step="any"
                 value={targetAmount}
                 onChange={(e) => setTargetAmount(e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent shadow-sm"
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent shadow-sm"
                 placeholder="e.g. 500000"
               />
             </div>
@@ -740,7 +740,7 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
                   onClick={() => setPaymentType(opt.value as "bank" | "mobile_money" | "")}
                   className={`py-2 px-2 rounded-xl text-xs font-semibold border-2 transition-all duration-150
                     ${paymentType === opt.value
-                      ? "border-coral-500 text-coral-700 bg-coral-50"
+                      ? "border-blue-500 text-blue-700 bg-blue-50"
                       : "border-gray-200 text-slate-500 hover:border-gray-300 hover:bg-gray-50"
                     }`}
                 >
@@ -757,7 +757,7 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
                     type="text"
                     value={bankAccountName}
                     onChange={(e) => setBankAccountName(e.target.value)}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                     placeholder="Full name on account"
                   />
                 </div>
@@ -767,7 +767,7 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
                     type="text"
                     value={bankAccountNumber}
                     onChange={(e) => setBankAccountNumber(e.target.value)}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                     placeholder="e.g. 1234567890"
                   />
                 </div>
@@ -777,7 +777,7 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
                     type="text"
                     value={bankName}
                     onChange={(e) => setBankName(e.target.value)}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                     placeholder="e.g. Stanbic Bank"
                   />
                 </div>
@@ -811,7 +811,7 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
                     type="tel"
                     value={receivingMobileNumber}
                     onChange={(e) => setReceivingMobileNumber(e.target.value)}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-coral-400 focus:border-transparent"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                     placeholder="e.g. 0771234567"
                   />
                 </div>
@@ -830,7 +830,7 @@ const CreateRequestModal = ({ isOpen, onClose, onSuccess, editRequest }: Props) 
             <button
               type="submit"
               disabled={createRequestMutation.isPending || updateRequestMutation.isPending}
-              className="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-coral hover:shadow-coral-lg active:scale-95"
+              className="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-blue-200/60 hover:shadow-blue-300/40 active:scale-95"
             >
               {(createRequestMutation.isPending || updateRequestMutation.isPending)
                 ? "Submitting..."

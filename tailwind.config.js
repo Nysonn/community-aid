@@ -4,28 +4,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Anika", "ui-sans-serif", "system-ui", "sans-serif"],
-      },
-      colors: {
-        coral: {
-          50:  "#FEF0ED",
-          100: "#FCDDD7",
-          200: "#F9BAAF",
-          300: "#F48E7C",
-          400: "#EE6249",
-          500: "#E8452A",
-          600: "#C53B22",
-          700: "#9E301B",
-          800: "#792514",
-          900: "#541A0D",
-        },
-        brand: {
-          yellow: "#F5C518",
-          "yellow-dark": "#D4A80A",
-          "yellow-light": "#FEFCE8",
-          charcoal: "#1A1A1A",
-          "charcoal-soft": "#3D3D3D",
-        },
+        sans: ["Merriweather", "ui-serif", "Georgia", "serif"],
       },
       borderRadius: {
         "2xl": "1rem",
@@ -34,8 +13,6 @@ export default {
       boxShadow: {
         "card": "0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06)",
         "card-hover": "0 10px 25px -5px rgb(0 0 0 / 0.08), 0 4px 10px -6px rgb(0 0 0 / 0.05)",
-        "coral": "0 4px 14px rgba(232,69,42,0.30)",
-        "coral-lg": "0 8px 24px rgba(232,69,42,0.36)",
       },
       keyframes: {
         "fade-in-up": {
