@@ -247,7 +247,7 @@ const Navbar = () => {
 
                   <button
                     onClick={handleSignOut}
-                    className="flex items-center gap-1.5 text-[13px] font-medium px-3 py-1.5 rounded-lg transition-colors duration-200 text-slate-400 hover:text-red-500 hover:bg-red-50/70"
+                    className="flex items-center gap-1.5 text-[13px] font-medium px-3 py-1.5 rounded-lg transition-colors duration-200 text-slate-400 hover:text-blue-500 hover:bg-blue-50/70"
                   >
                     <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -312,7 +312,7 @@ const Navbar = () => {
                   <div className="h-5 w-px bg-slate-200 mx-0.5" />
                   <button
                     onClick={handleSignOut}
-                    className="text-[13px] font-medium px-3 py-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50/70 transition-colors duration-200"
+                    className="text-[13px] font-medium px-3 py-1.5 rounded-lg text-slate-400 hover:text-blue-500 hover:bg-blue-50/70 transition-colors duration-200"
                   >
                     Sign Out
                   </button>
@@ -532,11 +532,11 @@ const Navbar = () => {
 
               <button
                 onClick={handleSignOut}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13.5px] font-medium text-red-500 hover:bg-red-50 transition-colors duration-150 text-left w-full mt-1"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13.5px] font-medium text-blue-500 hover:bg-blue-50 transition-colors duration-150 text-left w-full mt-1"
               >
                 <span
                   className="flex items-center justify-center h-7 w-7 rounded-lg shrink-0"
-                  style={{ background: "rgba(239,68,68,0.08)", color: "#ef4444" }}
+                  style={{ background: "rgba(59,130,246,0.08)", color: "#3b82f6" }}
                 >
                   <svg className="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

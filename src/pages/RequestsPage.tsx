@@ -176,7 +176,7 @@ const RequestsPage = () => {
             {hasActiveFilters && (
               <button
                 onClick={handleClearFilters}
-                className="ml-auto flex items-center gap-1.5 text-xs text-slate-400 hover:text-red-500 transition-colors px-2.5 py-1.5 rounded-lg hover:bg-red-50"
+                className="ml-auto flex items-center gap-1.5 text-xs text-slate-400 hover:text-blue-500 transition-colors px-2.5 py-1.5 rounded-lg hover:bg-blue-50"
               >
                 <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -212,8 +212,8 @@ const RequestsPage = () => {
           </div>
         ) : isError ? (
           <div className="text-center py-20">
-            <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-red-50 mb-4">
-              <svg className="h-7 w-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-blue-50 mb-4">
+              <svg className="h-7 w-7 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
               </svg>
             </div>

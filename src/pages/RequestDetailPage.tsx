@@ -15,7 +15,7 @@ import type { Offer } from "../types";
 const OFFER_TYPE_BADGE: Record<Offer["offer_type"], string> = {
   transport: "bg-blue-100 text-blue-700",
   donation: "bg-teal-100 text-teal-700",
-  expertise: "bg-orange-100 text-orange-700",
+  expertise: "bg-blue-50 text-blue-700",
 };
 
 const OFFER_STATUS_BADGE: Record<Offer["status"], string> = {

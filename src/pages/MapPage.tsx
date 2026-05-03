@@ -113,8 +113,8 @@ const MapPage = () => {
                 onClick={() => setShowRequests((v) => !v)}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 ${
                   showRequests
-                    ? "bg-red-600 text-white shadow-sm"
-                    : "bg-white text-slate-600 border border-gray-200 hover:border-red-200 hover:text-red-600 hover:bg-red-50/60 shadow-sm"
+                    ? "bg-blue-600 text-white shadow-sm"
+                    : "bg-white text-slate-600 border border-gray-200 hover:border-blue-200 hover:text-blue-600 hover:bg-blue-50/60 shadow-sm"
                 }`}
               >
                 {showRequests ? "Hide Requests" : "Show Requests"}
@@ -136,7 +136,7 @@ const MapPage = () => {
               <div className="hidden sm:block w-px h-4 bg-gray-200 shrink-0" />
               <div className="flex items-center gap-4 text-xs text-slate-500 flex-wrap">
                 <span className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-red-500 shrink-0 shadow-sm" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-blue-500 shrink-0 shadow-sm" />
                   Emergency Requests
                 </span>
                 <span className="flex items-center gap-1.5">
@@ -167,7 +167,7 @@ const MapPage = () => {
             <div className="flex items-center gap-3 text-xs text-slate-400">
               {showRequests && (
                 <span className="flex items-center gap-1">
-                  <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
                   {visibleRequests.length} request{visibleRequests.length !== 1 ? "s" : ""}
                 </span>
               )}
@@ -270,7 +270,7 @@ const MapPage = () => {
           <div className="px-4 py-2.5 border-t border-gray-50 bg-slate-50/60 flex items-center justify-between gap-3">
             <div className="flex items-center gap-4 text-xs text-slate-500 flex-wrap">
               <span className="flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-red-500 shrink-0" />
+                <span className="h-1.5 w-1.5 rounded-full bg-blue-500 shrink-0" />
                 {visibleRequests.length} request{visibleRequests.length !== 1 ? "s" : ""} shown
               </span>
               <span className="flex items-center gap-1.5">

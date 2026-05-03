@@ -27,7 +27,7 @@ function offerTypeBadge(type: string): string {
     case "transport":  return "bg-[#F5F5F5] text-slate-800 border-[#D6D6D6]";
     case "donation":   return "bg-blue-50 text-blue-600 border-blue-200";
     case "expertise":  return "bg-amber-50 text-amber-700 border-yellow-200";
-    case "material":   return "bg-orange-50 text-orange-600 border-orange-200";
+    case "material":   return "bg-blue-50 text-blue-600 border-blue-200";
     default:           return "bg-slate-50 text-slate-500 border-slate-200";
   }
 }
@@ -71,7 +71,7 @@ function TableWrap({ children }: { children: React.ReactNode }) {
 function THead({ columns }: { columns: string[] }) {
   return (
     <thead>
-      <tr style={{ background: "linear-gradient(90deg, #FEF0ED 0%, #fff5f3 100%)", borderBottom: "1px solid #f9d4cc" }}>
+      <tr style={{ background: "linear-gradient(90deg, #EFF6FF 0%, #f0f7ff 100%)", borderBottom: "1px solid #BFDBFE" }}>
         {columns.map((col) => (
           <th key={col} className="px-5 py-3.5 text-left text-[11px] font-bold text-blue-600 uppercase tracking-widest whitespace-nowrap">
             {col}
@@ -316,7 +316,7 @@ function OverviewTab() {
           <span className="h-px flex-1 bg-gray-100" /> People <span className="h-px flex-1 bg-gray-100" />
         </p>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          <StatCard label="Total Community Members" value={stats.total_users} color="#E8452A" bg="#FEF0ED" border="#FCDDD7" iconPath="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+          <StatCard label="Total Community Members" value={stats.total_users} color="#2563eb" bg="#EFF6FF" border="#BFDBFE" iconPath="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
           <StatCard label="Active Members" value={stats.active_users} color="#059669" bg="#ECFDF5" border="#A7F3D0" iconPath="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           <StatCard label="Inactive Members" value={stats.total_users - stats.active_users} color="#94a3b8" bg="#f8fafc" border="#e2e8f0" iconPath="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </div>
@@ -328,8 +328,8 @@ function OverviewTab() {
           <span className="h-px flex-1 bg-gray-100" /> Requests <span className="h-px flex-1 bg-gray-100" />
         </p>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard label="Total Requests" value={stats.total_requests} color="#E8452A" bg="#FEF0ED" border="#FCDDD7" iconPath="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-          <StatCard label="Pending Review" value={stats.pending_requests} color="#D4A80A" bg="#FEFCE8" border="#FEF08A" iconPath="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <StatCard label="Total Requests" value={stats.total_requests} color="#2563eb" bg="#EFF6FF" border="#BFDBFE" iconPath="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          <StatCard label="Pending Review" value={stats.pending_requests} color="#2563eb" bg="#EFF6FF" border="#BFDBFE" iconPath="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           <StatCard label="Approved" value={stats.approved_requests} color="#059669" bg="#ECFDF5" border="#A7F3D0" iconPath="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           <StatCard label="Rejected" value={stats.rejected_requests} color="#DC2626" bg="#FEF2F2" border="#FECACA" iconPath="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </div>
@@ -341,10 +341,10 @@ function OverviewTab() {
           <span className="h-px flex-1 bg-gray-100" /> Aid &amp; Finance <span className="h-px flex-1 bg-gray-100" />
         </p>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard label="Total Offers" value={stats.total_offers} color="#E8452A" bg="#FEF0ED" border="#FCDDD7" iconPath="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          <StatCard label="Total Offers" value={stats.total_offers} color="#2563eb" bg="#EFF6FF" border="#BFDBFE" iconPath="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
           <StatCard label="Fulfilled Offers" value={stats.fulfilled_offers} color="#059669" bg="#ECFDF5" border="#A7F3D0" iconPath="M5 13l4 4L19 7" />
-          <StatCard label="Total Donations" value={stats.total_donations} color="#E8452A" bg="#FEF0ED" border="#FCDDD7" iconPath="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          <StatCard label="Total Aid Mobilised" value={formatUGX(stats.total_donation_amount)} color="#D4A80A" bg="#FEFCE8" border="#FEF08A" iconPath="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+          <StatCard label="Total Donations" value={stats.total_donations} color="#2563eb" bg="#EFF6FF" border="#BFDBFE" iconPath="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <StatCard label="Total Aid Mobilised" value={formatUGX(stats.total_donation_amount)} color="#2563eb" bg="#EFF6FF" border="#BFDBFE" iconPath="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
         </div>
       </div>
     </div>
@@ -644,7 +644,7 @@ function UsersTab() {
                       <div className="flex items-center gap-3">
                         <div
                           className="h-8 w-8 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
-                          style={{ background: u.is_active ? "linear-gradient(135deg, #E8452A, #C53B22)" : "#94a3b8" }}
+                          style={{ background: u.is_active ? "linear-gradient(135deg, #2563eb, #185FA5)" : "#94a3b8" }}
                         >
                           {u.full_name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase()}
                         </div>
@@ -923,27 +923,27 @@ const SIDEBAR_ITEMS: { id: Tab; label: string; subtitle: string; color: string; 
     id: "overview",
     label: "Overview",
     subtitle: "Stats at a glance",
-    color: "#E8452A",
-    bg: "#FEF0ED",
-    border: "#FCDDD7",
+    color: "#2563eb",
+    bg: "#EFF6FF",
+    border: "#BFDBFE",
     iconPath: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
   },
   {
     id: "requests",
     label: "Requests",
     subtitle: "Review & approve",
-    color: "#D4A80A",
-    bg: "#FEFCE8",
-    border: "#FEF08A",
+    color: "#2563eb",
+    bg: "#EFF6FF",
+    border: "#BFDBFE",
     iconPath: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4",
   },
   {
     id: "offers",
     label: "Offers",
     subtitle: "Responder activity",
-    color: "#E8452A",
-    bg: "#FEF0ED",
-    border: "#FCDDD7",
+    color: "#2563eb",
+    bg: "#EFF6FF",
+    border: "#BFDBFE",
     iconPath: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z",
   },
   {
@@ -959,9 +959,9 @@ const SIDEBAR_ITEMS: { id: Tab; label: string; subtitle: string; color: string; 
     id: "donations",
     label: "Donations",
     subtitle: "Track incoming funds",
-    color: "#E8452A",
-    bg: "#FEF0ED",
-    border: "#FCDDD7",
+    color: "#2563eb",
+    bg: "#EFF6FF",
+    border: "#BFDBFE",
     iconPath: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
   },
   {
@@ -1034,13 +1034,13 @@ const AdminDashboardPage = () => {
             <img src="/logo.png" alt="CommunityAid" className="h-8 w-8 object-contain drop-shadow-sm transition-transform duration-200 group-hover:scale-105" />
             <span className="select-none" style={{ display: "flex", alignItems: "baseline", gap: "4px" }}>
               <span style={{ fontFamily: "system-ui, sans-serif", fontWeight: 500, fontSize: "17px", letterSpacing: "-0.5px", color: "#0f172a" }}>Community</span>
-              <span style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontWeight: 700, fontSize: "18px", letterSpacing: "-0.5px", color: "#E8452A" }}>Aid</span>
-              <span aria-hidden="true" style={{ width: "5px", height: "5px", borderRadius: "999px", background: "#E8452A", alignSelf: "flex-start", marginTop: "5px", marginLeft: "1px", flexShrink: 0 }} />
+              <span style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontWeight: 700, fontSize: "18px", letterSpacing: "-0.5px", color: "#2563eb" }}>Aid</span>
+              <span aria-hidden="true" style={{ width: "5px", height: "5px", borderRadius: "999px", background: "#2563eb", alignSelf: "flex-start", marginTop: "5px", marginLeft: "1px", flexShrink: 0 }} />
             </span>
           </Link>
           <div
             className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest"
-            style={{ background: "#FEF0ED", color: "#E8452A", border: "1px solid #FCDDD7" }}
+            style={{ background: "#EFF6FF", color: "#2563eb", border: "1px solid #BFDBFE" }}
           >
             <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />

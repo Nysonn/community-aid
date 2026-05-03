@@ -17,7 +17,7 @@ const TYPE_BADGE_KNOWN: Record<KnownType, string> = {
   medical: "bg-blue-50 text-blue-600 border-blue-200",
   food:    "bg-amber-50 text-amber-700 border-yellow-200",
   rescue:  "bg-[#F5F5F5] text-slate-800 border-[#D6D6D6]",
-  shelter: "bg-orange-50 text-orange-600 border-orange-200",
+  shelter: "bg-blue-50 text-blue-600 border-blue-200",
 };
 
 export function typeBadgeClass(type: string): string {
@@ -42,7 +42,7 @@ const TYPE_STRIPE_KNOWN: Record<KnownType, string> = {
   medical: "bg-gradient-to-r from-blue-500 to-blue-600",
   food:    "bg-gradient-to-r from-amber-400 to-amber-500",
   rescue:  "bg-gradient-to-r from-slate-700 to-slate-600",
-  shelter: "bg-gradient-to-r from-orange-400 to-orange-500",
+  shelter: "bg-gradient-to-r from-blue-400 to-blue-500",
 };
 
 function typeStripeClass(type: string): string {
@@ -280,8 +280,8 @@ const RequestCard = ({ request }: Props) => {
                 onClick={() => setShowDonateModal(true)}
                 className="w-full inline-flex items-center justify-center gap-2 text-[13px] font-bold text-white rounded-xl px-4 py-2.5 transition-all duration-200 active:scale-[0.97] hover:shadow-blue-300/40"
                 style={{
-                  background: "linear-gradient(135deg, #E8452A 0%, #C53B22 100%)",
-                  boxShadow: "0 2px 12px rgba(232,69,42,0.30)",
+                  background: "linear-gradient(135deg, #2563eb 0%, #185FA5 100%)",
+                  boxShadow: "0 2px 12px rgba(37,99,235,0.30)",
                 }}
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -307,7 +307,7 @@ const RequestCard = ({ request }: Props) => {
                 <button
                   type="button"
                   onClick={() => setShowOfferModal(true)}
-                  className="flex-1 inline-flex items-center justify-center gap-1.5 text-[12.5px] font-semibold text-slate-800 hover:text-white bg-amber-50 hover:bg-amber-100 border border-yellow-200 hover:border-amber-400 px-3 py-2 rounded-xl transition-all duration-200"
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 text-[12.5px] font-semibold text-blue-700 hover:text-white bg-blue-50 hover:bg-blue-600 border border-blue-200 hover:border-blue-600 px-3 py-2 rounded-xl transition-all duration-200"
                 >
                   <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
